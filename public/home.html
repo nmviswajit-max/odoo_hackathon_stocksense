@@ -984,13 +984,23 @@
 
                 // 2. Fetch Users (Admin Only)
                 if (role === 'admin') {
-                    const resUsers = await fetch(`${API_BASE}/auth/users`, {
-                        headers: { 'Authorization': `Bearer ${jwtToken}` }
-                    });
-                    const dataUsers = await resUsers.json();
-                    const users = Array.isArray(dataUsers) ? dataUsers : (dataUsers.users || []);
-                    renderUsersTable(users);
-                    document.getElementById('statUsersCount').textContent = users.length || 0;
+                    try {
+                        const resUsers = await fetch(`${API_BASE}/auth/users`, {
+                            headers: { 'Authorization': `Bearer ${jwtToken}` }
+                        });
+                        if (resUsers.ok) {
+                            const dataUsers = await resUsers.json();
+                            const users = Array.isArray(dataUsers) ? dataUsers : (dataUsers.users || []);
+                            renderUsersTable(users);
+                            const elUsersCount = document.getElementById('statUsersCount');
+                            if (elUsersCount) elUsersCount.textContent = users.length || 0;
+                        } else {
+                            renderUsersTable([]);
+                        }
+                    } catch (errUser) {
+                        console.error('Error fetching users:', errUser);
+                        renderUsersTable([]);
+                    }
                 }
 
                 // 3. Fetch Operations

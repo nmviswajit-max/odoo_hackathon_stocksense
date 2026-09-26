@@ -706,47 +706,70 @@
         }
 
         async function loadAdminData() {
+            // 1. Fetch Users
             try {
-                // 1. Fetch Users
                 const resUsers = await fetch(`${API_BASE}/auth/users`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const dataUsers = await resUsers.json();
-                const users = Array.isArray(dataUsers) ? dataUsers : (dataUsers.users || []);
-                renderUsersTable(users);
-                document.getElementById('statUsersCount').textContent = users.length || 0;
+                if (resUsers.ok) {
+                    const dataUsers = await resUsers.json();
+                    const users = Array.isArray(dataUsers) ? dataUsers : (dataUsers.users || []);
+                    renderUsersTable(users);
+                    document.getElementById('statUsersCount').textContent = users.length || 0;
+                } else { renderUsersTable([]); }
+            } catch (e) {
+                console.error('Failed to load users:', e);
+                renderUsersTable([]);
+            }
 
-                // 2. Fetch Products
+            // 2. Fetch Products
+            try {
                 const resProducts = await fetch(`${API_BASE}/products`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const dataProducts = await resProducts.json();
-                const products = Array.isArray(dataProducts) ? dataProducts : (dataProducts.products || []);
-                renderAdminProductsTable(products);
-                document.getElementById('statProductsCount').textContent = products.length || 0;
+                if (resProducts.ok) {
+                    const dataProducts = await resProducts.json();
+                    const products = Array.isArray(dataProducts) ? dataProducts : (dataProducts.products || []);
+                    renderAdminProductsTable(products);
+                    document.getElementById('statProductsCount').textContent = products.length || 0;
 
-                const valuation = products.reduce((acc, p) => acc + (p.quantity * (p.unit_price || 0)), 0);
-                document.getElementById('statStockValuation').textContent = `$${valuation.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                    const valuation = products.reduce((acc, p) => acc + (p.quantity * (p.unit_price || 0)), 0);
+                    document.getElementById('statStockValuation').textContent = `$${valuation.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                } else { renderAdminProductsTable([]); }
+            } catch (e) {
+                console.error('Failed to load products:', e);
+                renderAdminProductsTable([]);
+            }
 
-                // 3. Fetch Operations
+            // 3. Fetch Operations
+            try {
                 const resOps = await fetch(`${API_BASE}/operations`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const dataOps = await resOps.json();
-                const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
-                renderAdminOpsTable(ops);
-                document.getElementById('statOpsCount').textContent = ops.length || 0;
+                if (resOps.ok) {
+                    const dataOps = await resOps.json();
+                    const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
+                    renderAdminOpsTable(ops);
+                    document.getElementById('statOpsCount').textContent = ops.length || 0;
+                } else { renderAdminOpsTable([]); }
+            } catch (e) {
+                console.error('Failed to load operations:', e);
+                renderAdminOpsTable([]);
+            }
 
-                // 4. Fetch AI
+            // 4. Fetch AI
+            try {
                 const resAi = await fetch(`${API_BASE}/operations/ai-reorder`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const dataAi = await resAi.json();
-                const aiData = Array.isArray(dataAi) ? dataAi : (dataAi.predictions || dataAi.recommendations || []);
-                renderAiData(aiData);
-
-            } catch (err) {
-                console.error('Failed to load admin data:', err);
+                if (resAi.ok) {
+                    const dataAi = await resAi.json();
+                    const aiData = Array.isArray(dataAi) ? dataAi : (dataAi.predictions || dataAi.recommendations || []);
+                    renderAiData(aiData);
+                } else { renderAiData([]); }
+            } catch (e) {
+                console.error('Failed to load AI data:', e);
+                renderAiData([]);
             }
         }
 
