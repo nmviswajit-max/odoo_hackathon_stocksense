@@ -33,7 +33,8 @@
         }
 
         button,
-        input {
+        input,
+        select {
             font: inherit;
         }
 
@@ -292,7 +293,6 @@
             background: #e6f5f0;
             color: var(--teal);
             margin-bottom: 27px;
-            transition: all 0.3s ease;
         }
 
         h2 {
@@ -320,7 +320,7 @@
             margin-bottom: 22px;
         }
 
-        input {
+        input, select {
             width: 100%;
             height: 50px;
             border: 1px solid #cfdcdd;
@@ -336,14 +336,9 @@
             color: #95a6ab;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: var(--teal);
             box-shadow: 0 0 0 3px #087f7622;
-        }
-
-        input.input-error {
-            border-color: var(--error);
-            box-shadow: 0 0 0 3px rgba(217, 56, 30, 0.15);
         }
 
         .password-wrap {
@@ -401,13 +396,6 @@
             transform: translateY(-1px);
         }
 
-        .primary:focus-visible,
-        .toggle:focus-visible,
-        a:focus-visible {
-            outline: 3px solid #82c6b9;
-            outline-offset: 3px;
-        }
-
         .separator {
             display: flex;
             align-items: center;
@@ -437,19 +425,6 @@
             margin-left: 4px;
         }
 
-        .notice {
-            min-height: 22px;
-            margin-top: 24px;
-            color: #687d81;
-            font-size: 12px;
-            text-align: center;
-            line-height: 1.5;
-            padding: 8px 12px;
-            border-radius: 8px;
-            background: #f0f7f5;
-            transition: all 0.3s ease;
-        }
-
         .form-view {
             display: none;
             animation: fadeIn 0.3s ease forwards;
@@ -464,7 +439,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Modal Popup Styles */
+        /* Modal Overlay */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -490,14 +465,13 @@
 
         .modal-card {
             background: #fff;
-            width: min(100%, 420px);
+            width: min(100%, 430px);
             border-radius: 20px;
             padding: 32px 28px 28px;
             box-shadow: 0 20px 50px rgba(7, 108, 101, 0.2);
             text-align: center;
             transform: scale(0.92);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
         }
 
         .modal-overlay.open .modal-card {
@@ -513,27 +487,15 @@
             place-items: center;
         }
 
-        .modal-icon.error {
-            background: var(--error-bg);
-            color: var(--error);
-        }
-
-        .modal-icon.success {
-            background: var(--success-bg);
-            color: var(--success);
-        }
-
-        .modal-icon.info {
-            background: #e8f7f1;
-            color: var(--teal);
-        }
+        .modal-icon.error { background: var(--error-bg); color: var(--error); }
+        .modal-icon.success { background: var(--success-bg); color: var(--success); }
+        .modal-icon.info { background: #e8f7f1; color: var(--teal); }
 
         .modal-card h3 {
             margin: 0 0 10px;
             font-size: 22px;
             font-weight: 750;
             color: var(--ink);
-            letter-spacing: -.03em;
         }
 
         .modal-card p {
@@ -543,79 +505,23 @@
             line-height: 1.55;
         }
 
-        .modal-card .primary {
-            height: 46px;
-            font-size: 14px;
-        }
-
         @media(max-width:900px) {
-            .shell {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .story {
-                padding-left: 35px;
-                padding-right: 35px;
-            }
-
-            .mini-card {
-                right: -8px;
-            }
-
-            .boxes {
-                gap: 7px;
-            }
-
-            .box {
-                width: 41px;
-            }
+            .shell { grid-template-columns: 1fr 1fr; }
+            .story { padding-left: 35px; padding-right: 35px; }
+            .mini-card { right: -8px; }
+            .boxes { gap: 7px; }
+            .box { width: 41px; }
         }
 
         @media(max-width:720px) {
-            .shell {
-                display: block;
-            }
-
-            .story {
-                display: none;
-            }
-
-            .form-panel {
-                min-height: 100vh;
-                align-items: flex-start;
-                padding: 31px 24px 55px;
-            }
-
-            .form-wrap {
-                margin: 0 auto;
-            }
-
-            .mobile-brand {
-                display: flex;
-                margin-bottom: 76px;
-            }
-
-            .welcome-icon {
-                margin-bottom: 23px;
-            }
-
-            h2 {
-                font-size: 31px;
-            }
-
-            .sub {
-                margin-bottom: 31px;
-            }
-        }
-
-        @media(max-width:380px) {
-            .form-panel {
-                padding: 26px 18px 42px;
-            }
-
-            .mobile-brand {
-                margin-bottom: 52px;
-            }
+            .shell { display: block; }
+            .story { display: none; }
+            .form-panel { min-height: 100vh; align-items: flex-start; padding: 31px 24px 55px; }
+            .form-wrap { margin: 0 auto; }
+            .mobile-brand { display: flex; margin-bottom: 76px; }
+            .welcome-icon { margin-bottom: 23px; }
+            h2 { font-size: 31px; }
+            .sub { margin-bottom: 31px; }
         }
     </style>
 </head>
@@ -661,7 +567,7 @@
                     </span>StockSense
                 </div>
 
-                <div class="welcome-icon" id="welcomeIcon" aria-hidden="true">
+                <div class="welcome-icon" aria-hidden="true">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                         <rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.8" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
@@ -670,8 +576,8 @@
 
                 <!-- SIGN IN FORM VIEW -->
                 <div id="signinView" class="form-view active">
-                    <h2 id="headingText">Welcome back</h2>
-                    <p class="sub" id="subText">Sign in to your StockSense workspace.</p>
+                    <h2>Welcome back</h2>
+                    <p class="sub">Sign in to your StockSense workspace.</p>
                     
                     <form id="login-form">
                         <div class="field">
@@ -681,11 +587,11 @@
                         <div class="field">
                             <div class="field-head">
                                 <label for="password">Password</label>
-                                <a onclick="showForgotPasswordModal()">Forgot password?</a>
+                                <a onclick="openOtpModal()">Forgot password?</a>
                             </div>
                             <div class="password-wrap">
                                 <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
-                                <button class="toggle" type="button" id="togglePasswordBtn" aria-label="Show password">Show</button>
+                                <button class="toggle" type="button" id="togglePasswordBtn">Show</button>
                             </div>
                         </div>
                         <button class="primary" type="submit" id="loginBtn">
@@ -693,14 +599,14 @@
                             <span aria-hidden="true">→</span>
                         </button>
                     </form>
-                    
+
                     <div class="separator">New here?</div>
                     <div class="signup">
                         New to StockSense? <a onclick="switchFormMode('signup')">Create an account</a>
                     </div>
                 </div>
 
-                <!-- ACCOUNT CREATION FORM VIEW -->
+                <!-- ACCOUNT CREATION FORM VIEW WITH ROLE SELECTION -->
                 <div id="signupView" class="form-view">
                     <h2>Create an account</h2>
                     <p class="sub">Set up your StockSense workspace today.</p>
@@ -717,10 +623,19 @@
                         </div>
 
                         <div class="field">
+                            <label for="signupRole">Select User Role</label>
+                            <select id="signupRole" required>
+                                <option value="manager">Inventory Manager (Stock, Receipts & Deliveries)</option>
+                                <option value="worker">Warehouse Staff (Transfers & Stock Movements)</option>
+                                <option value="admin">System Administrator (Full Control)</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
                             <label for="signupPassword">Password</label>
                             <div class="password-wrap">
                                 <input id="signupPassword" type="password" placeholder="At least 6 characters" required minlength="6">
-                                <button class="toggle" type="button" id="toggleSignupPasswordBtn" aria-label="Show password">Show</button>
+                                <button class="toggle" type="button" id="toggleSignupPasswordBtn">Show</button>
                             </div>
                         </div>
 
@@ -728,7 +643,7 @@
                             <label for="signupConfirmPassword">Confirm Password</label>
                             <div class="password-wrap">
                                 <input id="signupConfirmPassword" type="password" placeholder="Re-enter your password" required minlength="6">
-                                <button class="toggle" type="button" id="toggleConfirmPasswordBtn" aria-label="Show password">Show</button>
+                                <button class="toggle" type="button" id="toggleConfirmPasswordBtn">Show</button>
                             </div>
                         </div>
 
@@ -743,56 +658,57 @@
                         Already have an account? <a onclick="switchFormMode('signin')">Sign in instead</a>
                     </div>
                 </div>
-
-                <div class="notice" role="status" id="notice">
-                    Default demo credentials: <strong>admin@stocksense.com</strong> / <strong>password123</strong>
-                </div>
             </div>
         </section>
     </main>
 
-    <!-- INTERACTIVE MODAL POPUP -->
+    <!-- GENERAL ALERT MODAL POPUP -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-card">
-            <div class="modal-icon error" id="modalIcon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-                    <path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-                </svg>
+            <div class="modal-icon error" id="modalIcon"></div>
+            <h3 id="modalTitle">Header</h3>
+            <p id="modalMessage">Message content</p>
+            <button class="primary" onclick="closeModal('modalOverlay')">Got it</button>
+        </div>
+    </div>
+
+    <!-- OTP PASSWORD RESET MODAL -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-card">
+            <h3 style="margin-bottom:8px;">OTP Password Reset</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Enter your registered account email to receive a 6-digit OTP verification code.</p>
+
+            <!-- Step 1: Request OTP -->
+            <form id="otpRequestForm" onsubmit="handleSendOtp(event)">
+                <div class="field" style="text-align:left;">
+                    <label>Registered Email</label>
+                    <input type="email" id="otpEmail" placeholder="name@company.com" required>
+                </div>
+                <button type="submit" class="primary" id="sendOtpBtn">Send 6-Digit OTP</button>
+            </form>
+
+            <!-- Step 2: Verify OTP & New Password -->
+            <form id="otpVerifyForm" style="display:none; text-align:left; margin-top:16px;" onsubmit="handleVerifyOtpReset(event)">
+                <div class="field">
+                    <label>Enter 6-Digit OTP Code</label>
+                    <input type="text" id="otpCodeInput" placeholder="123456" maxlength="6" required style="font-weight:700; letter-spacing:2px; text-align:center; font-size:18px;">
+                </div>
+                <div class="field">
+                    <label>New Password</label>
+                    <input type="password" id="otpNewPassword" placeholder="Minimum 6 characters" minlength="6" required>
+                </div>
+                <button type="submit" class="primary">Verify & Reset Password</button>
+            </form>
+
+            <div style="margin-top:16px;">
+                <a onclick="closeModal('otpModal')" style="font-size:12px; color:var(--muted);">Cancel</a>
             </div>
-            <h3 id="modalTitle">Password Mismatch</h3>
-            <p id="modalMessage">The passwords you entered do not match. Please verify both fields and try again.</p>
-            <button class="primary" onclick="closeModal()">Got it</button>
         </div>
     </div>
 
     <script>
-        // Seed default accounts in localStorage if empty
-        function initializeAccounts() {
-            if (!localStorage.getItem('stocksense_users')) {
-                const defaultUsers = [
-                    {
-                        name: 'Admin User',
-                        email: 'admin@stocksense.com',
-                        password: 'password123'
-                    }
-                ];
-                localStorage.setItem('stocksense_users', JSON.stringify(defaultUsers));
-            }
-        }
-        initializeAccounts();
+        const API_BASE = '/api/auth';
 
-        // DOM elements
-        const signinView = document.getElementById('signinView');
-        const signupView = document.getElementById('signupView');
-        const loginForm = document.getElementById('login-form');
-        const signupForm = document.getElementById('signup-form');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalIcon = document.getElementById('modalIcon');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-
-        // Toggle password visibility helpers
         function setupPasswordToggle(inputId, toggleBtnId) {
             const input = document.getElementById(inputId);
             const btn = document.getElementById(toggleBtnId);
@@ -802,7 +718,6 @@
                 const isPassword = input.type === 'password';
                 input.type = isPassword ? 'text' : 'password';
                 btn.textContent = isPassword ? 'Hide' : 'Show';
-                btn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
             });
         }
 
@@ -810,152 +725,157 @@
         setupPasswordToggle('signupPassword', 'toggleSignupPasswordBtn');
         setupPasswordToggle('signupConfirmPassword', 'toggleConfirmPasswordBtn');
 
-        // Form View Switching
         function switchFormMode(mode) {
             if (mode === 'signup') {
-                signinView.classList.remove('active');
-                signupView.classList.add('active');
+                document.getElementById('signinView').classList.remove('active');
+                document.getElementById('signupView').classList.add('active');
             } else {
-                signupView.classList.remove('active');
-                signinView.classList.add('active');
+                document.getElementById('signupView').classList.remove('active');
+                document.getElementById('signinView').classList.add('active');
             }
         }
 
-        // Modal Popup Controls
         function showModal(title, message, type = 'error') {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            const icon = document.getElementById('modalIcon');
+            icon.className = `modal-icon ${type}`;
 
-            modalIcon.className = `modal-icon ${type}`;
             if (type === 'error') {
-                modalIcon.innerHTML = `
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-                        <path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-                    </svg>`;
+                icon.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`;
             } else if (type === 'success') {
-                modalIcon.innerHTML = `
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>`;
+                icon.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2"/><path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2.2"/></svg>`;
             } else {
-                modalIcon.innerHTML = `
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                        <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-                    </svg>`;
+                icon.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2.2"/></svg>`;
             }
-
-            modalOverlay.classList.add('open');
+            document.getElementById('modalOverlay').classList.add('open');
         }
 
-        function closeModal() {
-            modalOverlay.classList.remove('open');
+        function openOtpModal() {
+            document.getElementById('otpModal').classList.add('open');
+            document.getElementById('otpRequestForm').style.display = 'block';
+            document.getElementById('otpVerifyForm').style.display = 'none';
         }
 
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) closeModal();
-        });
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
 
         // Login Handler
-        loginForm.addEventListener('submit', (e) => {
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value.trim().toLowerCase();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            const users = JSON.parse(localStorage.getItem('stocksense_users') || '[]');
-            const matchedUser = users.find(u => u.email.toLowerCase() === email && u.password === password);
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-            if (matchedUser) {
-                // Save active session
-                localStorage.setItem('stocksense_current_user', JSON.stringify({
-                    name: matchedUser.name || 'Inventory Manager',
-                    email: matchedUser.email,
-                    loginTime: new Date().toISOString()
-                }));
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Authentication Failed', data.message || 'Invalid email or password.', 'error');
+                    return;
+                }
 
-                // Redirect to Home page
-                showModal('Sign in Successful!', 'Redirecting to your StockSense workspace...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'home.html';
-                }, 1200);
-            } else {
-                showModal('Authentication Failed', 'Invalid email address or password. Please check your credentials and try again.', 'error');
-                document.getElementById('password').classList.add('input-error');
-                setTimeout(() => document.getElementById('password').classList.remove('input-error'), 3000);
+                localStorage.setItem('stocksense_jwt_token', data.token);
+                localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
+
+                showModal('Sign in Successful!', `Redirecting to StockSense Dashboard...`, 'success');
+                setTimeout(() => window.location.href = 'home.html', 1100);
+            } catch (err) {
+                showModal('Connection Error', 'Backend server unreachable.', 'error');
             }
         });
 
-        // Account Creation Handler
-        signupForm.addEventListener('submit', (e) => {
+        // Registration Handler with Role selection
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const email = document.getElementById('signupEmail').value.trim();
+            const role = document.getElementById('signupRole').value;
             const pwd = document.getElementById('signupPassword').value;
             const confirmPwd = document.getElementById('signupConfirmPassword').value;
 
-            const pwdInput = document.getElementById('signupPassword');
-            const confirmInput = document.getElementById('signupConfirmPassword');
-
-            // 1. Password Verification & Mismatch Check
             if (pwd !== confirmPwd) {
-                pwdInput.classList.add('input-error');
-                confirmInput.classList.add('input-error');
-
-                showModal(
-                    'Password Mismatch', 
-                    'The passwords you entered do not match. Please make sure both fields are identical and try again.', 
-                    'error'
-                );
-
-                setTimeout(() => {
-                    pwdInput.classList.remove('input-error');
-                    confirmInput.classList.remove('input-error');
-                }, 3500);
+                showModal('Password Mismatch', 'The passwords you entered do not match. Please try again.', 'error');
                 return;
             }
 
-            if (pwd.length < 6) {
-                showModal('Weak Password', 'Password must be at least 6 characters long.', 'error');
-                return;
+            try {
+                const res = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, role, password: pwd })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Registration Error', data.message || 'Failed to create account.', 'error');
+                    return;
+                }
+
+                localStorage.setItem('stocksense_jwt_token', data.token);
+                localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
+
+                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to workspace...`, 'success');
+                setTimeout(() => window.location.href = 'home.html', 1300);
+            } catch (err) {
+                showModal('Server Error', 'Failed to register account.', 'error');
             }
-
-            // 2. Check existing user
-            const users = JSON.parse(localStorage.getItem('stocksense_users') || '[]');
-            const existingUser = users.find(u => u.email.toLowerCase() === email);
-
-            if (existingUser) {
-                showModal('Account Exists', 'An account with this email address already exists. Please sign in instead.', 'error');
-                return;
-            }
-
-            // 3. Register user
-            const newUser = { name, email, password: pwd };
-            users.push(newUser);
-            localStorage.setItem('stocksense_users', JSON.stringify(users));
-
-            // Auto log in new user
-            localStorage.setItem('stocksense_current_user', JSON.stringify({
-                name: newUser.name,
-                email: newUser.email,
-                loginTime: new Date().toISOString()
-            }));
-
-            showModal('Account Created!', `Welcome to StockSense, ${name}! Your account has been created successfully. Redirecting to workspace...`, 'success');
-            
-            setTimeout(() => {
-                window.location.href = 'home.html';
-            }, 1500);
         });
 
-        // Forgot password popup demo
-        function showForgotPasswordModal() {
-            const emailInput = document.getElementById('email').value.trim();
-            if (emailInput) {
-                showModal('Reset Link Sent', `Password reset instructions have been sent to ${emailInput}.`, 'info');
-            } else {
-                showModal('Forgot Password', 'Please enter your email address in the field above to receive a reset link.', 'info');
+        // OTP Request Handler
+        async function handleSendOtp(e) {
+            e.preventDefault();
+            const email = document.getElementById('otpEmail').value.trim();
+            try {
+                const res = await fetch(`${API_BASE}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('OTP Request Error', data.message, 'error');
+                    return;
+                }
+
+                document.getElementById('otpRequestForm').style.display = 'none';
+                document.getElementById('otpVerifyForm').style.display = 'block';
+                showModal('OTP Dispatched', `A 6-digit OTP code has been dispatched. Enter the OTP code to set your new password.`, 'info');
+            } catch (err) {
+                showModal('Server Error', 'Failed to send OTP code.', 'error');
+            }
+        }
+
+        // OTP Verification Handler
+        async function handleVerifyOtpReset(e) {
+            e.preventDefault();
+            const email = document.getElementById('otpEmail').value.trim();
+            const otp = document.getElementById('otpCodeInput').value.trim();
+            const newPassword = document.getElementById('otpNewPassword').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/verify-otp-reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp, newPassword })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Verification Failed', data.message, 'error');
+                    return;
+                }
+
+                closeModal('otpModal');
+                showModal('Password Reset Complete!', 'Your password has been updated successfully. Please sign in.', 'success');
+            } catch (err) {
+                showModal('Server Error', 'Password reset failed.', 'error');
             }
         }
     </script>
