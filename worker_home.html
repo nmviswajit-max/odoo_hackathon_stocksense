@@ -601,7 +601,8 @@
                 const resProducts = await fetch(`${API_BASE}/products`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                allProducts = await resProducts.json();
+                const dataProducts = await resProducts.json();
+                allProducts = Array.isArray(dataProducts) ? dataProducts : (dataProducts.products || []);
                 renderWorkerLookupTable(allProducts);
                 populateWorkerProductSelect(allProducts);
 
@@ -609,7 +610,8 @@
                 const resOps = await fetch(`${API_BASE}/operations`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const ops = await resOps.json();
+                const dataOps = await resOps.json();
+                const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
 
                 const pendingInt = ops.filter(o => o.doc_type === 'Internal' && o.status !== 'Done').length;
                 const pendingIn = ops.filter(o => o.doc_type === 'Receipt' && o.status !== 'Done').length;
@@ -620,7 +622,8 @@
                 const resMoves = await fetch(`${API_BASE}/operations/move-history`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const moves = await resMoves.json();
+                const dataMoves = await resMoves.json();
+                const moves = Array.isArray(dataMoves) ? dataMoves : (dataMoves.move_history || []);
                 const myMoves = moves.filter(m => m.user === currentUser.name);
                 document.getElementById('statCompletedMoves').textContent = myMoves.length;
                 renderWorkerLogTable(myMoves.length > 0 ? myMoves : moves);

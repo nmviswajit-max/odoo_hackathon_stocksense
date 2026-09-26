@@ -711,7 +711,8 @@
                 const resUsers = await fetch(`${API_BASE}/auth/users`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const users = await resUsers.json();
+                const dataUsers = await resUsers.json();
+                const users = Array.isArray(dataUsers) ? dataUsers : (dataUsers.users || []);
                 renderUsersTable(users);
                 document.getElementById('statUsersCount').textContent = users.length || 0;
 
@@ -719,7 +720,8 @@
                 const resProducts = await fetch(`${API_BASE}/products`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const products = await resProducts.json();
+                const dataProducts = await resProducts.json();
+                const products = Array.isArray(dataProducts) ? dataProducts : (dataProducts.products || []);
                 renderAdminProductsTable(products);
                 document.getElementById('statProductsCount').textContent = products.length || 0;
 
@@ -730,15 +732,17 @@
                 const resOps = await fetch(`${API_BASE}/operations`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const ops = await resOps.json();
+                const dataOps = await resOps.json();
+                const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
                 renderAdminOpsTable(ops);
                 document.getElementById('statOpsCount').textContent = ops.length || 0;
 
                 // 4. Fetch AI
-                const resAi = await fetch(`${API_BASE}/inventory/ai/reorder-recommendations`, {
+                const resAi = await fetch(`${API_BASE}/operations/ai-reorder`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const aiData = await resAi.json();
+                const dataAi = await resAi.json();
+                const aiData = Array.isArray(dataAi) ? dataAi : (dataAi.predictions || dataAi.recommendations || []);
                 renderAiData(aiData);
 
             } catch (err) {
@@ -859,19 +863,21 @@
 
         function renderAiData(ai) {
             const container = document.getElementById('aiRecsContainer');
-            if (!ai || !ai.recommendations || ai.recommendations.length === 0) {
-                container.innerHTML = `<p style="color:var(--muted);">No current stockout risks detected by AI.</p>`;
+            const items = Array.isArray(ai) ? ai : (ai.predictions || ai.recommendations || []);
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `<p style="color:var(--muted); font-size:13px;">No current stockout risks detected by AI.</p>`;
                 return;
             }
 
-            container.innerHTML = ai.recommendations.map(r => `
-                <div style="background:#0d1117; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px;">
+            container.innerHTML = items.map(r => `
+                <div style="background:var(--card-bg); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <strong>${r.product_name} (${r.sku})</strong>
-                        <span style="color:var(--warning); font-weight:800; font-size:12px;">Stockout risk in ${r.projected_stockout_days} days</span>
+                        <strong>${r.name || r.product_name} (${r.sku})</strong>
+                        <span style="color:var(--warning); font-weight:800; font-size:12px;">Stockout risk in ${r.days_until_stockout || r.projected_stockout_days || 3} days</span>
                     </div>
                     <div style="font-size:12px; color:var(--muted);">
-                        Current Stock: ${r.current_stock} | Recommended Reorder: <strong>+${r.recommended_order_qty} ${r.uom}</strong> | Supplier: ${r.supplier}
+                        Current Stock: ${r.current_stock} | Recommended Reorder: <strong>+${r.suggested_reorder_qty || r.recommended_order_qty || 25} ${r.uom || 'Units'}</strong> | Supplier: ${r.supplier || 'Global Supplier'}
                     </div>
                 </div>
             `).join('');

@@ -727,7 +727,8 @@
                 const resProducts = await fetch(`${API_BASE}/products`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const products = await resProducts.json();
+                const dataProducts = await resProducts.json();
+                const products = Array.isArray(dataProducts) ? dataProducts : (dataProducts.products || []);
                 renderManagerProductsTable(products);
                 populateProductSelect(products);
 
@@ -742,23 +743,26 @@
                 const resOps = await fetch(`${API_BASE}/operations`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const ops = await resOps.json();
+                const dataOps = await resOps.json();
+                const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
                 renderManagerOpsTable(ops);
                 const pending = ops.filter(o => o.status !== 'Done').length;
                 document.getElementById('statPendingOps').textContent = pending;
 
                 // 3. Fetch AI
-                const resAi = await fetch(`${API_BASE}/inventory/ai/reorder-recommendations`, {
+                const resAi = await fetch(`${API_BASE}/operations/ai-reorder`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const aiData = await resAi.json();
+                const dataAi = await resAi.json();
+                const aiData = Array.isArray(dataAi) ? dataAi : (dataAi.predictions || dataAi.recommendations || []);
                 renderManagerAiData(aiData);
 
                 // 4. Fetch Moves
                 const resMoves = await fetch(`${API_BASE}/operations/move-history`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const moves = await resMoves.json();
+                const dataMoves = await resMoves.json();
+                const moves = Array.isArray(dataMoves) ? dataMoves : (dataMoves.move_history || []);
                 renderMovesTable(moves);
 
             } catch (err) {
