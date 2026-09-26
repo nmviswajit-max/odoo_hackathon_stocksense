@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StockSense — Sign in</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #142c3a;
+            --muted: #607480;
+            --teal: #087f76;
+            --teal-dark: #076c65;
+            --line: #dce6e7;
+            --bg: #f6faf9;
+            --error: #d9381e;
+            --error-bg: #fdf2f0;
+            --success: #0e8a43;
+            --success-bg: #edfbf3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        a {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 650;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1.13fr) minmax(440px, .87fr);
+            min-height: 100vh;
+        }
+
+        .story {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 47px clamp(32px, 5vw, 82px) 36px;
+            background: radial-gradient(circle at 86% 21%, #d8f5ee 0, transparent 36%), linear-gradient(142deg, #eaf5f1 0%, #f4f8f4 57%, #e1eeed 100%);
+        }
+
+        .story::after {
+            content: "";
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            border: 1px solid #cce7df;
+            border-radius: 50%;
+            right: -260px;
+            bottom: -270px;
+            box-shadow: 0 0 0 85px #ffffff22, 0 0 0 170px #ffffff20;
+            pointer-events: none;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: max-content;
+            font-size: 21px;
+            font-weight: 780;
+            letter-spacing: -.7px;
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            background: var(--teal);
+            color: #fff;
+            border-radius: 11px;
+            box-shadow: 0 5px 12px #087f762e;
+        }
+
+        .story-inner {
+            width: min(100%, 620px);
+            margin: auto 0;
+            padding: 50px 0 44px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #baded6;
+            border-radius: 99px;
+            background: #ffffffad;
+            color: #28665e;
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 27px 0 16px;
+            max-width: 580px;
+            font-size: clamp(40px, 4.1vw, 68px);
+            line-height: 1.08;
+            letter-spacing: -.055em;
+        }
+
+        .intro {
+            margin: 0;
+            max-width: 485px;
+            color: #52707a;
+            font-size: 18px;
+            line-height: 1.65;
+        }
+
+        .visual {
+            position: relative;
+            margin-top: 57px;
+            min-height: 264px;
+            max-width: 590px;
+            border: 1px solid #d5e7e2;
+            border-radius: 23px;
+            background: #fff;
+            box-shadow: 0 24px 55px #21574b16;
+            padding: 23px 25px 25px;
+        }
+
+        .visual-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e8efed;
+            padding-bottom: 17px;
+        }
+
+        .visual-head strong {
+            font-size: 14px;
+        }
+
+        .visual-head span {
+            font-size: 11px;
+            color: #368077;
+            background: #e8f7f1;
+            padding: 6px 9px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .boxes {
+            display: flex;
+            align-items: flex-end;
+            gap: 11px;
+            height: 126px;
+            margin-top: 21px;
+            padding: 0 12px 17px;
+            border-bottom: 2px solid #d7e7e2;
+        }
+
+        .box {
+            width: 53px;
+            height: 57px;
+            border-radius: 6px 6px 2px 2px;
+            background: linear-gradient(135deg, #8acfc0, #479c8d);
+            border: 1px solid #479c8d;
+            box-shadow: inset -9px -8px #0000000b;
+            position: relative;
+        }
+
+        .box::before {
+            content: "";
+            display: block;
+            width: 19px;
+            height: 11px;
+            margin: auto;
+            background: #f4e3ba;
+            opacity: .78;
+        }
+
+        .box.tall {
+            height: 91px;
+            background: linear-gradient(135deg, #aadcd0, #63b3a4);
+        }
+
+        .box.mid {
+            height: 73px;
+            background: linear-gradient(135deg, #b2d2d3, #77a9a9);
+        }
+
+        .box.slim {
+            width: 34px;
+            height: 107px;
+            background: linear-gradient(135deg, #86c4b9, #5aa79a);
+        }
+
+        .boxes .spacer {
+            flex: 1;
+        }
+
+        .mini-card {
+            position: absolute;
+            right: -27px;
+            bottom: 25px;
+            width: 230px;
+            padding: 15px 16px;
+            border: 1px solid #e2ebeb;
+            background: #fff;
+            border-radius: 13px;
+            box-shadow: 0 12px 32px #234d4925;
+        }
+
+        .mini-card strong {
+            display: block;
+            margin-bottom: 11px;
+            font-size: 12px;
+        }
+
+        .mini-row {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #536a72;
+            font-size: 11px;
+            padding: 5px 0;
+        }
+
+        .dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            background: #58ba9e;
+        }
+
+        .dot.second {
+            background: #7faec1;
+        }
+
+        .dot.third {
+            background: #dfbe79;
+        }
+
+        .story-footer {
+            position: relative;
+            z-index: 1;
+            color: #6d8586;
+            font-size: 12px;
+        }
+
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px clamp(28px, 4.5vw, 80px);
+            background: #fff;
+        }
+
+        .form-wrap {
+            width: min(100%, 410px);
+            margin: -6px 0 0;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .welcome-icon {
+            display: grid;
+            place-items: center;
+            width: 47px;
+            height: 47px;
+            border-radius: 13px;
+            background: #e6f5f0;
+            color: var(--teal);
+            margin-bottom: 27px;
+        }
+
+        h2 {
+            margin: 0 0 9px;
+            font-size: 34px;
+            line-height: 1.2;
+            letter-spacing: -.045em;
+        }
+
+        .sub {
+            margin: 0 0 35px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin: 0 0 9px;
+        }
+
+        .field {
+            margin-bottom: 22px;
+        }
+
+        input, select {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #cfdcdd;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            padding: 0 15px;
+            outline: none;
+            transition: border .15s, box-shadow .15s;
+        }
+
+        input::placeholder {
+            color: #95a6ab;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px #087f7622;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 67px;
+        }
+
+        .toggle {
+            position: absolute;
+            right: 11px;
+            top: 9px;
+            padding: 7px 5px;
+            border: 0;
+            background: none;
+            color: #53747b;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .field-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-head a {
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .primary {
+            width: 100%;
+            height: 51px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--teal);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 8px 19px #087f762e;
+            transition: background .15s, transform .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .primary:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .separator {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 29px 0 22px;
+            color: #9eacae;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .13em;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: #e5ecec;
+        }
+
+        .signup {
+            text-align: center;
+            color: #6b7d82;
+            font-size: 13px;
+        }
+
+        .signup a {
+            margin-left: 4px;
+        }
+
+        .form-view {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .form-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(20, 44, 58, 0.45);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #fff;
+            width: min(100%, 430px);
+            border-radius: 20px;
+            padding: 32px 28px 28px;
+            box-shadow: 0 20px 50px rgba(7, 108, 101, 0.2);
+            text-align: center;
+            transform: scale(0.92);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.open .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+        }
+
+        .modal-icon.error { background: var(--error-bg); color: var(--error); }
+        .modal-icon.success { background: var(--success-bg); color: var(--success); }
+        .modal-icon.info { background: #e8f7f1; color: var(--teal); }
+
+        .modal-card h3 {
+            margin: 0 0 10px;
+            font-size: 22px;
+            font-weight: 750;
+            color: var(--ink);
+        }
+
+        .modal-card p {
+            margin: 0 0 24px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        @media(max-width:900px) {
+            .shell { grid-template-columns: 1fr 1fr; }
+            .story { padding-left: 35px; padding-right: 35px; }
+            .mini-card { right: -8px; }
+            .boxes { gap: 7px; }
+            .box { width: 41px; }
+        }
+
+        @media(max-width:720px) {
+            .shell { display: block; }
+            .story { display: none; }
+            .form-panel { min-height: 100vh; align-items: flex-start; padding: 31px 24px 55px; }
+            .form-wrap { margin: 0 auto; }
+            .mobile-brand { display: flex; margin-bottom: 76px; }
+            .welcome-icon { margin-bottom: 23px; }
+            h2 { font-size: 31px; }
+            .sub { margin-bottom: 31px; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="shell">
+        <section class="story" aria-label="About StockSense">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                        <path d="m4.5 7.7 7.5 4.2 7.5-4.2M12 12v8.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                    </svg>
+                </span>StockSense
+            </div>
+            <div class="story-inner">
+                <span class="eyebrow">Inventory, organized</span>
+                <h1>Inventory, in clear view.</h1>
+                <p class="intro">Manage stock across products, locations, and operations in one place.</p>
+                <div class="visual" aria-hidden="true">
+                    <div class="visual-head"><strong>Warehouse overview</strong><span>Connected workflow</span></div>
+                    <div class="boxes">
+                        <i class="box"></i><i class="box tall"></i><i class="box mid"></i><i class="box"></i><i class="box slim"></i><span class="spacer"></span>
+                    </div>
+                    <div class="mini-card"><strong>At a glance</strong>
+                        <div class="mini-row"><i class="dot"></i> Products &amp; locations</div>
+                        <div class="mini-row"><i class="dot second"></i> Incoming receipts</div>
+                        <div class="mini-row"><i class="dot third"></i> Outgoing deliveries</div>
+                    </div>
+                </div>
+            </div>
+            <div class="story-footer">Built for inventory managers and warehouse teams.</div>
+        </section>
+
+        <section class="form-panel" aria-label="Authentication Form">
+            <div class="form-wrap">
+                <div class="brand mobile-brand">
+                    <span class="brand-mark" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                            <path d="m4.5 7.7 7.5 4.2 7.5-4.2M12 12v8.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                        </svg>
+                    </span>StockSense
+                </div>
+
+                <div class="welcome-icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.8" />
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                </div>
+
+                <!-- SIGN IN FORM VIEW -->
+                <div id="signinView" class="form-view active">
+                    <h2>Welcome back</h2>
+                    <p class="sub">Sign in to your StockSense workspace.</p>
+                    
+                    <form id="login-form">
+                        <div class="field">
+                            <label for="email">Email address</label>
+                            <input id="email" type="email" autocomplete="username" placeholder="name@company.com" required>
+                        </div>
+                        <div class="field">
+                            <div class="field-head">
+                                <label for="password">Password</label>
+                                <a onclick="openOtpModal()">Forgot password?</a>
+                            </div>
+                            <div class="password-wrap">
+                                <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+                                <button class="toggle" type="button" id="togglePasswordBtn">Show</button>
+                            </div>
+                        </div>
+                        <button class="primary" type="submit" id="loginBtn">
+                            <span>Sign in</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </form>
+
+                    <div class="separator">New here?</div>
+                    <div class="signup">
+                        New to StockSense? <a onclick="switchFormMode('signup')">Create an account</a>
+                    </div>
+                </div>
+
+                <!-- ACCOUNT CREATION FORM VIEW WITH ROLE SELECTION -->
+                <div id="signupView" class="form-view">
+                    <h2>Create an account</h2>
+                    <p class="sub">Set up your StockSense workspace today.</p>
+
+                    <form id="signup-form">
+                        <div class="field">
+                            <label for="signupName">Full Name</label>
+                            <input id="signupName" type="text" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupEmail">Email address</label>
+                            <input id="signupEmail" type="email" placeholder="name@company.com" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupRole">Select User Role</label>
+                            <select id="signupRole" required>
+                                <option value="manager">Inventory Manager (Stock, Receipts & Deliveries)</option>
+                                <option value="worker">Warehouse Staff (Transfers & Stock Movements)</option>
+                                <option value="admin">System Administrator (Full Control)</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupPassword">Password</label>
+                            <div class="password-wrap">
+                                <input id="signupPassword" type="password" placeholder="At least 6 characters" required minlength="6">
+                                <button class="toggle" type="button" id="toggleSignupPasswordBtn">Show</button>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupConfirmPassword">Confirm Password</label>
+                            <div class="password-wrap">
+                                <input id="signupConfirmPassword" type="password" placeholder="Re-enter your password" required minlength="6">
+                                <button class="toggle" type="button" id="toggleConfirmPasswordBtn">Show</button>
+                            </div>
+                        </div>
+
+                        <button class="primary" type="submit" id="signupBtn">
+                            <span>Create Account</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </form>
+
+                    <div class="separator">Already registered?</div>
+                    <div class="signup">
+                        Already have an account? <a onclick="switchFormMode('signin')">Sign in instead</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- GENERAL ALERT MODAL POPUP -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <div class="modal-icon error" id="modalIcon"></div>
+            <h3 id="modalTitle">Header</h3>
+            <p id="modalMessage">Message content</p>
+            <button class="primary" onclick="closeModal('modalOverlay')">Got it</button>
+        </div>
+    </div>
+
+    <!-- OTP PASSWORD RESET MODAL -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-card">
+            <h3 style="margin-bottom:8px;">OTP Password Reset</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Enter your registered account email to receive a 6-digit OTP verification code.</p>
+
+            <!-- Step 1: Request OTP -->
+            <form id="otpRequestForm" onsubmit="handleSendOtp(event)">
+                <div class="field" style="text-align:left;">
+                    <label>Registered Email</label>
+                    <input type="email" id="otpEmail" placeholder="name@company.com" required>
+                </div>
+                <button type="submit" class="primary" id="sendOtpBtn">Send 6-Digit OTP</button>
+            </form>
+
+            <!-- Step 2: Verify OTP & New Password -->
+            <form id="otpVerifyForm" style="display:none; text-align:left; margin-top:16px;" onsubmit="handleVerifyOtpReset(event)">
+                <div class="field">
+                    <label>Enter 6-Digit OTP Code</label>
+                    <input type="text" id="otpCodeInput" placeholder="123456" maxlength="6" required style="font-weight:700; letter-spacing:2px; text-align:center; font-size:18px;">
+                </div>
+                <div class="field">
+                    <label>New Password</label>
+                    <input type="password" id="otpNewPassword" placeholder="Minimum 6 characters" minlength="6" required>
+                </div>
+                <button type="submit" class="primary">Verify & Reset Password</button>
+            </form>
+
+            <div style="margin-top:16px;">
+                <a onclick="closeModal('otpModal')" style="font-size:12px; color:var(--muted);">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/auth';
+
+        function setupPasswordToggle(inputId, toggleBtnId) {
+            const input = document.getElementById(inputId);
+            const btn = document.getElementById(toggleBtnId);
+            if (!input || !btn) return;
+
+            btn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                btn.textContent = isPassword ? 'Hide' : 'Show';
+            });
+        }
+
+        setupPasswordToggle('password', 'togglePasswordBtn');
+        setupPasswordToggle('signupPassword', 'toggleSignupPasswordBtn');
+        setupPasswordToggle('signupConfirmPassword', 'toggleConfirmPasswordBtn');
+
+        function switchFormMode(mode) {
+            if (mode === 'signup') {
+                document.getElementById('signinView').classList.remove('active');
+                document.getElementById('signupView').classList.add('active');
+            } else {
+                document.getElementById('signupView').classList.remove('active');
+                document.getElementById('signinView').classList.add('active');
+            }
+        }
+
+        function showModal(title, message, type = 'error') {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            const icon = document.getElementById('modalIcon');
+            icon.className = `modal-icon ${type}`;
+
+            if (type === 'error') {
+                icon.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+            } else if (type === 'success') {
+                icon.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2"/><path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2.2"/></svg>`;
+            } else {
+                icon.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2.2"/></svg>`;
+            }
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function openOtpModal() {
+            document.getElementById('otpModal').classList.add('open');
+            document.getElementById('otpRequestForm').style.display = 'block';
+            document.getElementById('otpVerifyForm').style.display = 'none';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Authentication Failed', data.message || 'Invalid email or password.', 'error');
+                    return;
+                }
+
+                localStorage.setItem('stocksense_jwt_token', data.token);
+                localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
+
+                showModal('Sign in Successful!', `Redirecting to StockSense Dashboard...`, 'success');
+                setTimeout(() => window.location.href = 'home.html', 1100);
+            } catch (err) {
+                showModal('Connection Error', 'Backend server unreachable.', 'error');
+            }
+        });
+
+        // Registration Handler with Role selection
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const role = document.getElementById('signupRole').value;
+            const pwd = document.getElementById('signupPassword').value;
+            const confirmPwd = document.getElementById('signupConfirmPassword').value;
+
+            if (pwd !== confirmPwd) {
+                showModal('Password Mismatch', 'The passwords you entered do not match. Please try again.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, role, password: pwd })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Registration Error', data.message || 'Failed to create account.', 'error');
+                    return;
+                }
+
+                localStorage.setItem('stocksense_jwt_token', data.token);
+                localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
+
+                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to workspace...`, 'success');
+                setTimeout(() => window.location.href = 'home.html', 1300);
+            } catch (err) {
+                showModal('Server Error', 'Failed to register account.', 'error');
+            }
+        });
+
+        // OTP Request Handler
+        async function handleSendOtp(e) {
+            e.preventDefault();
+            const email = document.getElementById('otpEmail').value.trim();
+            try {
+                const res = await fetch(`${API_BASE}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('OTP Request Error', data.message, 'error');
+                    return;
+                }
+
+                document.getElementById('otpRequestForm').style.display = 'none';
+                document.getElementById('otpVerifyForm').style.display = 'block';
+                showModal('OTP Dispatched', `A 6-digit OTP code has been dispatched. Enter the OTP code to set your new password.`, 'info');
+            } catch (err) {
+                showModal('Server Error', 'Failed to send OTP code.', 'error');
+            }
+        }
+
+        // OTP Verification Handler
+        async function handleVerifyOtpReset(e) {
+            e.preventDefault();
+            const email = document.getElementById('otpEmail').value.trim();
+            const otp = document.getElementById('otpCodeInput').value.trim();
+            const newPassword = document.getElementById('otpNewPassword').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/verify-otp-reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp, newPassword })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Verification Failed', data.message, 'error');
+                    return;
+                }
+
+                closeModal('otpModal');
+                showModal('Password Reset Complete!', 'Your password has been updated successfully. Please sign in.', 'success');
+            } catch (err) {
+                showModal('Server Error', 'Password reset failed.', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

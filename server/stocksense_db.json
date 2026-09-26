@@ -1,0 +1,422 @@
+{
+  "users": [
+    {
+      "name": "Sarah Connor (Admin)",
+      "email": "admin@stocksense.com",
+      "password_hash": "$2a$10$BQuuep7O0vz1y6yWEh3BJu4NiGkb0YGb0QRoE8tOkRen6c3RRuV/a",
+      "role": "admin",
+      "id": "usr_1790408249369_ovxm7",
+      "created_at": "2026-09-26T07:37:29.369Z",
+      "otp_code": "823204",
+      "otp_expires": 1790410038636
+    },
+    {
+      "name": "Michael Scott (Manager)",
+      "email": "manager@stocksense.com",
+      "password_hash": "$2a$10$vbW1jvxUfQWXO4AhzElsfO8F8IyhGoCEIx2U7YUND5B.4fRvh5S8.",
+      "role": "manager",
+      "id": "usr_1790408249381_zoljg",
+      "created_at": "2026-09-26T07:37:29.381Z"
+    },
+    {
+      "name": "Alex Morgan (Staff)",
+      "email": "worker@stocksense.com",
+      "password_hash": "$2a$10$c9AEGQJkJLycL9W7VVSiSOXoGd6tO.sUcNZsg.OYxKbjCwaTzzJ9K",
+      "role": "worker",
+      "id": "usr_1790408249390_rtahx",
+      "created_at": "2026-09-26T07:37:29.390Z"
+    }
+  ],
+  "products": [
+    {
+      "sku": "STL-ROD-100",
+      "name": "Steel Rods 20mm",
+      "category": "Raw Material",
+      "uom": "Kg",
+      "quantity": 297,
+      "min_threshold": 40,
+      "max_threshold": 500,
+      "unit_price": 12.5,
+      "locations": {
+        "Main Warehouse": 297,
+        "Production Floor": 80
+      },
+      "id": "prd_1790408249448_tf9f",
+      "status": "In Stock",
+      "updated_at": "2026-09-26T07:37:29.448Z"
+    },
+    {
+      "sku": "CHR-OFF-20",
+      "name": "Ergonomic Office Chairs",
+      "category": "Finished Goods",
+      "uom": "Units",
+      "quantity": 38,
+      "min_threshold": 15,
+      "max_threshold": 100,
+      "unit_price": 145,
+      "locations": {
+        "Main Warehouse": 38
+      },
+      "id": "prd_1790408249458_1s2g",
+      "status": "In Stock",
+      "updated_at": "2026-09-26T07:37:29.458Z"
+    },
+    {
+      "sku": "ELE-SOL-450",
+      "name": "Solar Engine Controller",
+      "category": "Electronics",
+      "uom": "Units",
+      "quantity": 320,
+      "min_threshold": 50,
+      "max_threshold": 600,
+      "unit_price": 185,
+      "locations": {
+        "Warehouse 2": 320
+      },
+      "id": "prd_1790408249476_ojcr",
+      "status": "In Stock",
+      "updated_at": "2026-09-26T07:37:29.476Z"
+    },
+    {
+      "sku": "OPT-FIB-500",
+      "name": "Optical Fiber Cable",
+      "category": "Networking",
+      "uom": "Meters",
+      "quantity": 500,
+      "min_threshold": 100,
+      "max_threshold": 2000,
+      "unit_price": 4.2,
+      "locations": {
+        "Main Warehouse": 0,
+        "Warehouse 2": 500
+      },
+      "id": "prd_1790408249486_1y8q",
+      "status": "In Stock",
+      "updated_at": "2026-09-26T07:37:29.486Z"
+    },
+    {
+      "sku": "IND-SEN-90",
+      "name": "Hydraulic Pressure Sensor",
+      "category": "Industrial",
+      "uom": "Boxes",
+      "quantity": 45,
+      "min_threshold": 10,
+      "max_threshold": 200,
+      "unit_price": 89,
+      "locations": {
+        "Rack A": 45
+      },
+      "id": "prd_1790408249497_ngur",
+      "status": "In Stock",
+      "updated_at": "2026-09-26T07:37:29.497Z"
+    }
+  ],
+  "warehouses": [
+    {
+      "code": "WH/MAIN",
+      "name": "Main Warehouse",
+      "location_type": "Internal",
+      "id": "wh_1790408249400"
+    },
+    {
+      "code": "WH/PROD",
+      "name": "Production Floor",
+      "location_type": "Internal",
+      "id": "wh_1790408249410"
+    },
+    {
+      "code": "WH/RACK-A",
+      "name": "Rack A",
+      "location_type": "Internal",
+      "id": "wh_1790408249418"
+    },
+    {
+      "code": "WH/RACK-B",
+      "name": "Rack B",
+      "location_type": "Internal",
+      "id": "wh_1790408249429"
+    },
+    {
+      "code": "WH/WH2",
+      "name": "Warehouse 2",
+      "location_type": "Internal",
+      "id": "wh_1790408249436"
+    }
+  ],
+  "operations": [
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Steel Ltd",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790409438653_2xoy",
+      "reference": "WH/IN/0008",
+      "date": "2026-09-26T07:57:18.653Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T07:57:18.662Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Steel Ltd",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790409185495_34jz",
+      "reference": "WH/IN/0007",
+      "date": "2026-09-26T07:53:05.495Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T07:53:05.508Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Steel Ltd",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790408310705_p7yh",
+      "reference": "WH/IN/0006",
+      "date": "2026-09-26T07:38:30.705Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T07:38:30.715Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Global Electronics Vendor",
+      "source_location": "Vendor Location",
+      "dest_location": "Warehouse 2",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249486_1y8q",
+          "sku": "OPT-FIB-500",
+          "name": "Optical Fiber Cable",
+          "qty": 500
+        }
+      ],
+      "created_by": "Michael Scott (Manager)",
+      "id": "op_1790408249603_jsbv",
+      "reference": "WH/IN/0005",
+      "date": "2026-09-26T07:37:29.603Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T07:44:29.906Z"
+    },
+    {
+      "doc_type": "Adjustment",
+      "partner": "Quality Inventory Count",
+      "source_location": "Main Warehouse",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 147
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790408249578_7ajq",
+      "reference": "WH/ADJ/0004",
+      "date": "2026-09-26T07:37:29.578Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T07:37:29.589Z"
+    },
+    {
+      "doc_type": "Internal",
+      "partner": "Internal Production",
+      "source_location": "Main Warehouse",
+      "dest_location": "Production Floor",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 30
+        }
+      ],
+      "created_by": "Alex Morgan (Staff)",
+      "id": "op_1790408249552_2mgm",
+      "reference": "WH/INT/0003",
+      "date": "2026-09-26T07:37:29.552Z",
+      "validated_by": "Alex Morgan (Staff)",
+      "validated_at": "2026-09-26T07:37:29.564Z"
+    },
+    {
+      "doc_type": "Delivery",
+      "partner": "Acme Corp Customer",
+      "source_location": "Main Warehouse",
+      "dest_location": "Customer Location",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249458_1s2g",
+          "sku": "CHR-OFF-20",
+          "name": "Ergonomic Office Chairs",
+          "qty": 10
+        }
+      ],
+      "created_by": "Alex Morgan (Staff)",
+      "id": "op_1790408249529_sy10",
+      "reference": "WH/OUT/0002",
+      "date": "2026-09-26T07:37:29.529Z",
+      "validated_by": "Alex Morgan (Staff)",
+      "validated_at": "2026-09-26T07:37:29.541Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Apex Steel Industries Vendor",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Michael Scott (Manager)",
+      "id": "op_1790408249507_iwzz",
+      "reference": "WH/IN/0001",
+      "date": "2026-09-26T07:37:29.507Z",
+      "validated_by": "Michael Scott (Manager)",
+      "validated_at": "2026-09-26T07:37:29.518Z"
+    }
+  ],
+  "move_history": [
+    {
+      "id": "move_1790409438662_3cfk",
+      "date": "2026-09-26T07:57:18.662Z",
+      "reference": "WH/IN/0008",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790409185508_1yih",
+      "date": "2026-09-26T07:53:05.508Z",
+      "reference": "WH/IN/0007",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790408669906_y6f2",
+      "date": "2026-09-26T07:44:29.906Z",
+      "reference": "WH/IN/0005",
+      "doc_type": "Receipt",
+      "product_name": "Optical Fiber Cable",
+      "sku": "OPT-FIB-500",
+      "source_location": "Vendor Location",
+      "dest_location": "Warehouse 2",
+      "qty_change": "+500",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790408310715_7kqz",
+      "date": "2026-09-26T07:38:30.715Z",
+      "reference": "WH/IN/0006",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790408249589_26xr",
+      "date": "2026-09-26T07:37:29.589Z",
+      "reference": "WH/ADJ/0004",
+      "doc_type": "Adjustment",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Main Warehouse",
+      "dest_location": "Main Warehouse",
+      "qty_change": "Adjusted (-53)",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790408249564_c05r",
+      "date": "2026-09-26T07:37:29.564Z",
+      "reference": "WH/INT/0003",
+      "doc_type": "Internal",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Main Warehouse",
+      "dest_location": "Production Floor",
+      "qty_change": "Transfer 30 (Main Warehouse ➔ Production Floor)",
+      "user": "Alex Morgan (Staff)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790408249541_pj6j",
+      "date": "2026-09-26T07:37:29.541Z",
+      "reference": "WH/OUT/0002",
+      "doc_type": "Delivery",
+      "product_name": "Ergonomic Office Chairs",
+      "sku": "CHR-OFF-20",
+      "source_location": "Main Warehouse",
+      "dest_location": "Customer Location",
+      "qty_change": "-10",
+      "user": "Alex Morgan (Staff)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790408249518_dj5h",
+      "date": "2026-09-26T07:37:29.518Z",
+      "reference": "WH/IN/0001",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Michael Scott (Manager)",
+      "status": "Done"
+    }
+  ]
+}

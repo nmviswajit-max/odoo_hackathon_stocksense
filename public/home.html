@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StockSense — Odoo-Grade Inventory Terminal</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #142c3a;
+            --muted: #607480;
+            --teal: #087f76;
+            --teal-dark: #076c65;
+            --teal-light: #e8f7f1;
+            --line: #dce6e7;
+            --bg: #f4f8f7;
+            --sidebar-bg: #11232e;
+            --sidebar-text: #94aab5;
+            --sidebar-active: #087f76;
+            --card-bg: #ffffff;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --success: #059669;
+            --success-bg: #d1fae5;
+            --purple: #7c3aed;
+            --purple-bg: #f3e8ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --- LEFT SIDEBAR NAVIGATION --- */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 36px;
+            height: 36px;
+            background: var(--teal);
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(8, 127, 118, 0.4);
+        }
+
+        .nav-group {
+            padding: 16px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #5d7582;
+            padding: 12px 14px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            color: var(--sidebar-text);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: var(--teal);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(8, 127, 118, 0.35);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .profile-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--teal);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .user-name { font-size: 13px; font-weight: 700; color: #fff; }
+        .user-role { font-size: 11px; color: var(--sidebar-text); text-transform: capitalize; }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title h2 { font-size: 22px; font-weight: 800; letter-spacing: -.03em; }
+        .page-title p { font-size: 13px; color: var(--muted); }
+
+        .topbar-actions { display: flex; gap: 12px; }
+
+        .btn-primary {
+            background: var(--teal);
+            color: #fff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 9px;
+            font-weight: 750;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(8, 127, 118, 0.25);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid var(--line);
+            color: var(--ink);
+            padding: 9px 16px;
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+
+        .content { padding: 32px; flex: 1; }
+
+        /* --- DASHBOARD KPIS GRID --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+        }
+
+        .kpi-label { font-size: 12px; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+        .kpi-value { font-size: 26px; font-weight: 800; letter-spacing: -.03em; }
+
+        /* --- DYNAMIC FILTERS BAR --- */
+        .filter-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group { display: flex; align-items: center; gap: 8px; }
+        .filter-group label { font-size: 12px; font-weight: 700; color: var(--muted); }
+        .filter-group select {
+            height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+        }
+
+        /* --- SECTION VIEWS --- */
+        .view-panel { display: none; }
+        .view-panel.active { display: block; animation: fadeIn 0.25s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* DATA TABLES */
+        .table-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left; }
+        th { background: #f9fcfb; padding: 13px 20px; color: var(--muted); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--line); }
+        td { padding: 15px 20px; border-bottom: 1px solid var(--line); color: var(--ink); }
+        tr:hover td { background: #fafdfc; }
+
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
+        .badge-info { background: #e0f2fe; color: #0284c7; }
+        .badge-purple { background: var(--purple-bg); color: var(--purple); }
+
+        .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; border: 1px solid var(--line); background: #fff; }
+        .btn-sm:hover { background: #f0f7f5; border-color: var(--teal); color: var(--teal); }
+
+        /* MODAL POPUPS */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(17, 35, 46, 0.45); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; padding: 20px;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-card { background: #fff; width: min(100%, 540px); border-radius: 18px; padding: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        .modal-card h3 { margin-bottom: 16px; font-size: 20px; font-weight: 800; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 750; margin-bottom: 6px; color: var(--ink); }
+        .form-group input, .form-group select { width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 13.5px; outline: none; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <span class="brand-mark">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                        <path d="m4.5 7.7 7.5 4.2 7.5-4.2M12 12v8.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                    </svg>
+                </span>StockSense
+            </div>
+
+            <nav class="nav-group">
+                <div class="nav-label">Navigation</div>
+                <div class="nav-item active" onclick="switchView('dashboardView', this)">
+                    📊 <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="switchView('productsView', this)">
+                    📦 <span>Products & Catalog</span>
+                </div>
+                
+                <div class="nav-label">Operations</div>
+                <div class="nav-item" onclick="switchView('operationsView', this)">
+                    ⚡ <span>All Operations</span>
+                </div>
+                <div class="nav-item" onclick="switchView('historyView', this)">
+                    📜 <span>Move History Ledger</span>
+                </div>
+
+                <div class="nav-label">Intelligence</div>
+                <div class="nav-item" onclick="switchView('aiView', this)">
+                    🧠 <span>AI Reorder Engine</span>
+                </div>
+
+                <div class="nav-label">System</div>
+                <div class="nav-item" onclick="switchView('settingsView', this)">
+                    ⚙️ <span>Warehouses & Setting</span>
+                </div>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="profile-pill" onclick="openProfileModal()">
+                <div class="profile-user">
+                    <div class="avatar" id="sidebarAvatar">U</div>
+                    <div>
+                        <div class="user-name" id="sidebarUserName">User Name</div>
+                        <div class="user-role" id="sidebarUserRole">role</div>
+                    </div>
+                </div>
+                <span style="font-size:12px; opacity:0.6;">⚙️</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+        <header class="topbar">
+            <div class="page-title">
+                <h2 id="pageTitleText">Inventory Dashboard</h2>
+                <p id="pageSubText">Centralized real-time overview of business inventory operations.</p>
+            </div>
+            <div class="topbar-actions">
+                <button class="btn-secondary" onclick="openCreateOpModal()">+ New Operation</button>
+                <button class="btn-primary" onclick="openCreateProductModal()">+ Add Product</button>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- 1. DASHBOARD VIEW -->
+            <div id="dashboardView" class="view-panel active">
+                <!-- Dashboard KPIs -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Total Products in Stock</div>
+                        <div class="kpi-value" id="kpiTotalProducts">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Low / Out of Stock</div>
+                        <div class="kpi-value" id="kpiLowStock" style="color:var(--warning);">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Pending Receipts</div>
+                        <div class="kpi-value" id="kpiPendingReceipts" style="color:var(--teal);">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Pending Deliveries</div>
+                        <div class="kpi-value" id="kpiPendingDeliveries" style="color:var(--purple);">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Internal Transfers</div>
+                        <div class="kpi-value" id="kpiTransfersScheduled">0</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Filters Bar -->
+                <div class="filter-card">
+                    <div class="filter-group">
+                        <label>Doc Type:</label>
+                        <select id="filterDocType" onchange="loadDashboardData()">
+                            <option value="">All Document Types</option>
+                            <option value="Receipt">Receipts (Incoming)</option>
+                            <option value="Delivery">Delivery Orders (Outgoing)</option>
+                            <option value="Internal">Internal Transfers</option>
+                            <option value="Adjustment">Stock Adjustments</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="filterStatus" onchange="loadDashboardData()">
+                            <option value="">All Statuses</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Waiting">Waiting</option>
+                            <option value="Ready">Ready</option>
+                            <option value="Done">Done</option>
+                            <option value="Canceled">Canceled</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Warehouse/Location:</label>
+                        <select id="filterLocation" onchange="loadDashboardData()">
+                            <option value="">All Warehouses</option>
+                            <option value="Main Warehouse">Main Warehouse</option>
+                            <option value="Production Floor">Production Floor</option>
+                            <option value="Rack A">Rack A</option>
+                            <option value="Rack B">Rack B</option>
+                            <option value="Warehouse 2">Warehouse 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Recent Operations Table -->
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reference #</th>
+                                <th>Type</th>
+                                <th>Partner / Source</th>
+                                <th>Destination</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardOpsBody">
+                            <tr><td colspan="7" style="text-align:center; padding:20px;">Loading operations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. PRODUCTS VIEW -->
+            <div id="productsView" class="view-panel">
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product & SKU</th>
+                                <th>Category</th>
+                                <th>Unit of Measure</th>
+                                <th>In Stock</th>
+                                <th>Reordering Rules (Min - Max)</th>
+                                <th>Unit Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsBody">
+                            <tr><td colspan="7" style="text-align:center; padding:20px;">Loading product catalog...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. OPERATIONS VIEW -->
+            <div id="operationsView" class="view-panel">
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reference #</th>
+                                <th>Document Type</th>
+                                <th>Source Location</th>
+                                <th>Destination Location</th>
+                                <th>Created By</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allOperationsBody">
+                            <tr><td colspan="7" style="text-align:center; padding:20px;">Loading operations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. MOVE HISTORY LEDGER -->
+            <div id="historyView" class="view-panel">
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Doc Reference</th>
+                                <th>SKU & Product</th>
+                                <th>Source ➔ Destination</th>
+                                <th>Quantity Delta</th>
+                                <th>Validated By</th>
+                            </tr>
+                        </thead>
+                        <tbody id="moveHistoryBody">
+                            <tr><td colspan="6" style="text-align:center; padding:20px;">Loading ledger history...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 5. UNIQUE FEATURE: AI REORDER ENGINE -->
+            <div id="aiView" class="view-panel">
+                <div style="background:linear-gradient(135deg, #11232e, #087f76); color:#fff; border-radius:16px; padding:24px; margin-bottom:24px;">
+                    <h3 style="font-size:20px; font-weight:800; margin-bottom:6px;">🧠 StockSense AI Predictive Reorder Engine</h3>
+                    <p style="font-size:13px; opacity:0.85;">Neural burn-rate telemetry calculates daily consumption velocity and auto-generates 1-Click Replenishment POs before stockouts occur.</p>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SKU & Product</th>
+                                <th>Current Stock</th>
+                                <th>Daily Burn Rate</th>
+                                <th>Days Remaining</th>
+                                <th>AI Recommendation</th>
+                                <th>Suggested PO Qty</th>
+                                <th>Auto-Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aiPredictionsBody">
+                            <tr><td colspan="7" style="text-align:center; padding:20px;">Running AI telemetry analysis...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 6. SETTINGS VIEW -->
+            <div id="settingsView" class="view-panel">
+                <div class="table-card" style="padding:24px;">
+                    <h3 style="margin-bottom:16px; font-size:18px;">Warehouse & Location Configuration</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Warehouse Code</th>
+                                <th>Name</th>
+                                <th>Location Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>WH/MAIN</strong></td><td>Main Warehouse</td><td>Internal</td><td><span class="badge badge-success">Connected</span></td></tr>
+                            <tr><td><strong>WH/PROD</strong></td><td>Production Floor</td><td>Internal</td><td><span class="badge badge-success">Connected</span></td></tr>
+                            <tr><td><strong>WH/RACK-A</strong></td><td>Rack A</td><td>Internal</td><td><span class="badge badge-success">Connected</span></td></tr>
+                            <tr><td><strong>WH/RACK-B</strong></td><td>Rack B</td><td>Internal</td><td><span class="badge badge-success">Connected</span></td></tr>
+                            <tr><td><strong>WH/WH2</strong></td><td>Warehouse 2</td><td>Internal</td><td><span class="badge badge-success">Connected</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE PRODUCT MODAL -->
+    <div class="modal-overlay" id="createProductModal">
+        <div class="modal-card">
+            <h3>Create New Product</h3>
+            <form onsubmit="handleCreateProduct(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="pName" placeholder="Steel Rods 20mm" required>
+                    </div>
+                    <div class="form-group">
+                        <label>SKU / Code</label>
+                        <input type="text" id="pSku" placeholder="STL-ROD-100" required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="pCategory">
+                            <option value="Raw Material">Raw Material</option>
+                            <option value="Finished Goods">Finished Goods</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Networking">Networking</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit of Measure (UoM)</label>
+                        <select id="pUom">
+                            <option value="Units">Units</option>
+                            <option value="Kg">Kg</option>
+                            <option value="Meters">Meters</option>
+                            <option value="Boxes">Boxes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Initial Stock Qty</label>
+                        <input type="number" id="pQty" value="100" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price ($)</label>
+                        <input type="number" step="0.01" id="pPrice" value="25.00" required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Min Reorder Stock</label>
+                        <input type="number" id="pMin" value="15" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Target Stock</label>
+                        <input type="number" id="pMax" value="500" required>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('createProductModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CREATE OPERATION MODAL -->
+    <div class="modal-overlay" id="createOpModal">
+        <div class="modal-card">
+            <h3>Create Inventory Operation Document</h3>
+            <form onsubmit="handleCreateOperation(event)">
+                <div class="form-group">
+                    <label>Document Type</label>
+                    <select id="opDocType" onchange="updateLocationOptions()">
+                        <option value="Receipt">Receipts (Incoming Stock)</option>
+                        <option value="Delivery">Delivery Orders (Outgoing Goods)</option>
+                        <option value="Internal">Internal Transfer (Between Locations)</option>
+                        <option value="Adjustment">Stock Adjustment (Physical Count Fix)</option>
+                    </select>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Source Location</label>
+                        <select id="opSourceLoc">
+                            <option value="Vendor Location">Vendor Location</option>
+                            <option value="Main Warehouse">Main Warehouse</option>
+                            <option value="Rack A">Rack A</option>
+                            <option value="Rack B">Rack B</option>
+                            <option value="Warehouse 2">Warehouse 2</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Destination Location</label>
+                        <select id="opDestLoc">
+                            <option value="Main Warehouse">Main Warehouse</option>
+                            <option value="Production Floor">Production Floor</option>
+                            <option value="Customer Location">Customer Location</option>
+                            <option value="Rack A">Rack A</option>
+                            <option value="Rack B">Rack B</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Product</label>
+                    <select id="opProductSelect" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="opQty" value="10" min="1" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('createOpModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-card" style="width:380px; text-align:center;">
+            <div class="avatar" style="width:56px; height:56px; margin:0 auto 12px; font-size:20px;" id="profileModalAvatar">U</div>
+            <h3 id="profileModalName" style="margin-bottom:2px;">User Name</h3>
+            <p id="profileModalEmail" style="font-size:13px; color:var(--muted); margin-bottom:16px;">email@stocksense.com</p>
+            <div style="background:#f0f7f5; padding:10px; border-radius:10px; font-size:12px; font-weight:700; color:var(--teal-dark); margin-bottom:20px;" id="profileModalRole">
+                ROLE: SYSTEM ADMIN
+            </div>
+            <button class="btn-primary" style="width:100%; justify-content:center;" onclick="handleLogout()">Sign Out</button>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('stocksense_jwt_token');
+        const currentUserData = localStorage.getItem('stocksense_current_user');
+
+        if (!token || !currentUserData) window.location.href = 'login page.html';
+        const currentUser = JSON.parse(currentUserData);
+
+        // Sidebar Info
+        document.getElementById('sidebarUserName').textContent = currentUser.name;
+        document.getElementById('sidebarUserRole').textContent = currentUser.role.toUpperCase();
+        document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+
+        function switchView(viewId, element) {
+            document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
+
+            if (viewId === 'dashboardView') loadDashboardData();
+            if (viewId === 'productsView') loadProductsView();
+            if (viewId === 'operationsView') loadOperationsView();
+            if (viewId === 'historyView') loadHistoryView();
+            if (viewId === 'aiView') loadAiPredictions();
+        }
+
+        async function loadDashboardData() {
+            // Load KPIs
+            const kpiRes = await fetch('/api/operations/dashboard-kpis', { headers: { 'Authorization': `Bearer ${token}` } });
+            const kpiData = await kpiRes.json();
+            const kpis = kpiData.kpis || {};
+
+            document.getElementById('kpiTotalProducts').textContent = kpis.totalProducts || 0;
+            document.getElementById('kpiLowStock').textContent = (kpis.lowStockCount || 0) + (kpis.outOfStockCount || 0);
+            document.getElementById('kpiPendingReceipts').textContent = kpis.pendingReceipts || 0;
+            document.getElementById('kpiPendingDeliveries').textContent = kpis.pendingDeliveries || 0;
+            document.getElementById('kpiTransfersScheduled').textContent = kpis.internalTransfersScheduled || 0;
+
+            // Load Filtered Ops
+            const doc_type = document.getElementById('filterDocType').value;
+            const status = document.getElementById('filterStatus').value;
+            const location = document.getElementById('filterLocation').value;
+
+            const url = `/api/operations?doc_type=${doc_type}&status=${status}&location=${location}`;
+            const opsRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+            const opsData = await opsRes.json();
+
+            const tbody = document.getElementById('dashboardOpsBody');
+            tbody.innerHTML = (opsData.operations || []).map(o => `
+                <tr>
+                    <td><strong>${o.reference}</strong></td>
+                    <td><span class="badge badge-info">${o.doc_type}</span></td>
+                    <td>${o.source_location}</td>
+                    <td>${o.dest_location}</td>
+                    <td>${new Date(o.date).toLocaleDateString()}</td>
+                    <td><span class="badge ${o.status==='Done'?'badge-success':'badge-warning'}">${o.status}</span></td>
+                    <td>${o.status !== 'Done' ? `<button class="btn-sm" onclick="validateOp('${o.id}')">Validate ➔</button>` : 'Validated ✓'}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadProductsView() {
+            const res = await fetch('/api/products', { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            const products = data.products || [];
+
+            document.getElementById('productsBody').innerHTML = products.map(p => `
+                <tr>
+                    <td>
+                        <div style="font-weight:700;">${p.name}</div>
+                        <div style="font-size:12px; color:var(--muted);">SKU: ${p.sku}</div>
+                    </td>
+                    <td>${p.category}</td>
+                    <td><strong>${p.uom}</strong></td>
+                    <td><strong>${p.quantity} ${p.uom}</strong></td>
+                    <td>Min: ${p.min_threshold} | Max: ${p.max_threshold}</td>
+                    <td>$${parseFloat(p.unit_price).toFixed(2)}</td>
+                    <td><span class="badge ${p.status==='In Stock'?'badge-success':(p.status==='Low Stock'?'badge-warning':'badge-danger')}">${p.status}</span></td>
+                </tr>
+            `).join('');
+
+            // Populate Product Select options for Operations Modal
+            const select = document.getElementById('opProductSelect');
+            select.innerHTML = products.map(p => `<option value="${p.id}">${p.name} (${p.sku}) — Available: ${p.quantity} ${p.uom}</option>`).join('');
+        }
+
+        async function loadOperationsView() {
+            const res = await fetch('/api/operations', { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            document.getElementById('allOperationsBody').innerHTML = (data.operations || []).map(o => `
+                <tr>
+                    <td><strong>${o.reference}</strong></td>
+                    <td><span class="badge badge-info">${o.doc_type}</span></td>
+                    <td>${o.source_location}</td>
+                    <td>${o.dest_location}</td>
+                    <td>${o.created_by}</td>
+                    <td><span class="badge ${o.status==='Done'?'badge-success':'badge-warning'}">${o.status}</span></td>
+                    <td>${o.status !== 'Done' ? `<button class="btn-sm" onclick="validateOp('${o.id}')">Validate ➔</button>` : 'Validated ✓'}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadHistoryView() {
+            const res = await fetch('/api/operations/move-history', { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            document.getElementById('moveHistoryBody').innerHTML = (data.move_history || []).map(m => `
+                <tr>
+                    <td>${new Date(m.date).toLocaleString()}</td>
+                    <td><strong>${m.reference}</strong></td>
+                    <td>${m.product_name} (${m.sku})</td>
+                    <td>${m.source_location} ➔ ${m.dest_location}</td>
+                    <td><strong style="color:var(--teal);">${m.qty_change}</strong></td>
+                    <td>${m.user}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadAiPredictions() {
+            const res = await fetch('/api/operations/ai-reorder', { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            document.getElementById('aiPredictionsBody').innerHTML = (data.predictions || []).map(p => `
+                <tr>
+                    <td><strong>${p.name}</strong><br><span style="font-size:11px; color:var(--muted);">${p.sku}</span></td>
+                    <td>${p.current_stock} ${p.uom}</td>
+                    <td>${p.daily_burn_rate}</td>
+                    <td><strong style="color:${p.days_until_stockout<=5?'var(--danger)':'var(--teal)'}">${p.days_until_stockout} Days</strong></td>
+                    <td><span class="badge ${p.ai_recommendation==='CRITICAL_REORDER_REQUIRED'?'badge-danger':'badge-success'}">${p.ai_recommendation}</span></td>
+                    <td>${p.suggested_reorder_qty} ${p.uom}</td>
+                    <td>${p.ai_recommendation==='CRITICAL_REORDER_REQUIRED'?`<button class="btn-sm" onclick="autoGeneratePO('${p.product_id}', ${p.suggested_reorder_qty})">1-Click Auto PO ⚡</button>`:'Healthy'}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function validateOp(id) {
+            const res = await fetch(`/api/operations/validate/${id}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (!res.ok) alert(data.message);
+            else alert(data.message);
+            loadDashboardData();
+        }
+
+        async function autoGeneratePO(productId, qty) {
+            const res = await fetch('/api/operations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                    doc_type: 'Receipt',
+                    partner: 'Global Industrial Vendor',
+                    source_location: 'Vendor Location',
+                    dest_location: 'Main Warehouse',
+                    items: [{ product_id: productId, qty: qty }]
+                })
+            });
+            const data = await res.json();
+            await validateOp(data.operation.id);
+            loadAiPredictions();
+        }
+
+        function openCreateProductModal() { document.getElementById('createProductModal').classList.add('open'); }
+        function openCreateOpModal() { loadProductsView(); document.getElementById('createOpModal').classList.add('open'); }
+        function openProfileModal() {
+            document.getElementById('profileModalAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById('profileModalName').textContent = currentUser.name;
+            document.getElementById('profileModalEmail').textContent = currentUser.email;
+            document.getElementById('profileModalRole').textContent = `ROLE: ${currentUser.role.toUpperCase()}`;
+            document.getElementById('profileModal').classList.add('open');
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        async function handleCreateProduct(e) {
+            e.preventDefault();
+            const body = {
+                name: document.getElementById('pName').value,
+                sku: document.getElementById('pSku').value,
+                category: document.getElementById('pCategory').value,
+                uom: document.getElementById('pUom').value,
+                quantity: document.getElementById('pQty').value,
+                unit_price: document.getElementById('pPrice').value,
+                min_threshold: document.getElementById('pMin').value,
+                max_threshold: document.getElementById('pMax').value,
+                location: 'Main Warehouse'
+            };
+
+            const res = await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (!res.ok) alert(data.message);
+            else { closeModal('createProductModal'); loadProductsView(); }
+        }
+
+        async function handleCreateOperation(e) {
+            e.preventDefault();
+            const body = {
+                doc_type: document.getElementById('opDocType').value,
+                source_location: document.getElementById('opSourceLoc').value,
+                dest_location: document.getElementById('opDestLoc').value,
+                items: [{ product_id: document.getElementById('opProductSelect').value, qty: document.getElementById('opQty').value }]
+            };
+
+            const res = await fetch('/api/operations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (!res.ok) alert(data.message);
+            else { closeModal('createOpModal'); loadDashboardData(); }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('stocksense_jwt_token');
+            localStorage.removeItem('stocksense_current_user');
+            window.location.href = 'login page.html';
+        }
+
+        // Init
+        loadDashboardData();
+    </script>
+</body>
+
+</html>
