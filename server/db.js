@@ -31,7 +31,8 @@ class Database {
         products: parsed.products || [],
         warehouses: parsed.warehouses || [],
         operations: parsed.operations || [],
-        move_history: parsed.move_history || []
+        move_history: parsed.move_history || [],
+        pending_otps: parsed.pending_otps || {}
       };
     } catch (err) {
       console.error('Error reading DB:', err);
@@ -112,6 +113,41 @@ class Database {
     user.otp_expires = null;
     this.save(db);
     return user;
+  }
+
+  // Pending Signup OTP Operations
+  setSignupOTP(email, otpCode) {
+    const db = this.load();
+    if (!db.pending_otps) db.pending_otps = {};
+    db.pending_otps[email.toLowerCase()] = {
+      otp: otpCode,
+      expires: Date.now() + 10 * 60 * 1000
+    };
+    this.save(db);
+    return true;
+  }
+
+  verifySignupOTP(email, otpCode) {
+    const db = this.load();
+    const key = email.toLowerCase();
+    if (!db.pending_otps || !db.pending_otps[key]) {
+      throw new Error('No OTP code requested for this Gmail address. Please click "Verify Email" first.');
+    }
+
+    const record = db.pending_otps[key];
+    if (record.otp !== otpCode) {
+      throw new Error('Invalid OTP code. Please check your Gmail and try again.');
+    }
+
+    if (Date.now() > record.expires) {
+      delete db.pending_otps[key];
+      this.save(db);
+      throw new Error('OTP code has expired. Please request a new code.');
+    }
+
+    delete db.pending_otps[key];
+    this.save(db);
+    return true;
   }
 
   // --- WAREHOUSE & LOCATIONS ---

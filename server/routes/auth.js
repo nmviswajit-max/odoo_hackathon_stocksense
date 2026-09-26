@@ -98,6 +98,54 @@ const validateEmailFormat = (email) => {
   return emailRegex.test(email);
 };
 
+// Send OTP for Account Creation (Signup Email Verification)
+router.post('/send-signup-otp', (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Email address is required.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!validateEmailFormat(trimmedEmail)) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Invalid email format. Please enter a valid address (e.g. name@gmail.com).' });
+    }
+
+    const existingUser = db.getUserByEmail(trimmedEmail);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Account Conflict', message: 'An account with this email address already exists. Please sign in instead.' });
+    }
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    db.setSignupOTP(trimmedEmail, otpCode);
+
+    res.json({
+      message: `Gmail OTP dispatched successfully to ${trimmedEmail}`,
+      otpDemoCode: otpCode,
+      email: trimmedEmail
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Server Error', message: 'Failed to dispatch signup OTP code.' });
+  }
+});
+
+// Verify Signup OTP Code
+router.post('/verify-signup-otp', (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Email and 6-digit OTP code are required.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    db.verifySignupOTP(trimmedEmail, otp.trim());
+
+    res.json({ message: 'Gmail address verified successfully! You may now complete account creation.' });
+  } catch (err) {
+    res.status(400).json({ error: 'Verification Failed', message: err.message || 'Signup OTP verification failed.' });
+  }
+});
+
 // OTP Request (Sends 6-digit OTP code to registered Gmail address)
 router.post('/send-otp', (req, res) => {
   try {

@@ -87,6 +87,22 @@ async function runTestSuite() {
       assert(directOtpLogin.status === 200 && directOtpLogin.body.token, 'Direct Gmail OTP authentication succeeds without password');
     }
 
+    // 3b. Testing Signup Gmail OTP Flow
+    console.log('\n3b. Testing Account Creation Signup Gmail OTP Verification...');
+    const signupEmail = `newuser_${Date.now()}@gmail.com`;
+    const signupOtpRes = await request('POST', '/api/auth/send-signup-otp', {
+      email: signupEmail
+    });
+    assert(signupOtpRes.status === 200 && signupOtpRes.body.otpDemoCode, 'Signup Gmail OTP generated & dispatched');
+
+    if (signupOtpRes.body.otpDemoCode) {
+      const verifySignupOtpRes = await request('POST', '/api/auth/verify-signup-otp', {
+        email: signupEmail,
+        otp: signupOtpRes.body.otpDemoCode
+      });
+      assert(verifySignupOtpRes.status === 200, 'Signup Gmail OTP verification succeeds');
+    }
+
     // 4. Products & Dashboard KPIs Endpoint Test
     console.log('\n4. Testing Products & Dashboard KPIs...');
     const prods = await request('GET', '/api/products', null, {

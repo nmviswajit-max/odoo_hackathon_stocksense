@@ -706,10 +706,35 @@
                             <input id="signupName" type="text" placeholder="John Doe" required>
                         </div>
 
+                        <!-- Gmail Address with Verify OTP Action -->
                         <div class="field">
                             <label for="signupEmail">Gmail / Email address</label>
-                            <input id="signupEmail" type="email" placeholder="name@gmail.com" required>
+                            <div style="display:flex; gap:8px;">
+                                <input id="signupEmail" type="email" placeholder="name@gmail.com" required style="flex:1;">
+                                <button type="button" class="primary" id="sendSignupOtpBtn" onclick="handleSendSignupOtp()" style="width:auto; padding:0 14px; white-space:nowrap; font-size:12px; height:42px; background:var(--teal-dark);">
+                                    Send Gmail OTP
+                                </button>
+                            </div>
                             <div id="signupEmailStatus" class="format-status"></div>
+                        </div>
+
+                        <!-- OTP Notice Banner -->
+                        <div id="signupOtpNotice" style="display:none;" class="otp-dispatch-banner">
+                            <strong>📩 Gmail OTP Code Sent!</strong><br>
+                            A 6-digit OTP code was generated & sent to your Gmail. Check code below:
+                            <div id="signupDemoOtpBadge" style="margin-top:6px; font-weight:800; font-size:16px; letter-spacing:3px; color:var(--teal);"></div>
+                        </div>
+
+                        <!-- OTP Input & Verification Step -->
+                        <div id="signupOtpField" style="display:none;" class="field">
+                            <label for="signupOtpInput">Enter 6-Digit Gmail OTP</label>
+                            <div style="display:flex; gap:8px;">
+                                <input id="signupOtpInput" type="text" placeholder="123456" maxlength="6" style="font-weight:700; letter-spacing:3px; text-align:center; font-size:17px; flex:1;">
+                                <button type="button" class="primary" id="verifySignupOtpBtn" onclick="handleVerifySignupOtp()" style="width:auto; padding:0 14px; white-space:nowrap; font-size:12px; height:42px; background:var(--teal);">
+                                    Verify OTP
+                                </button>
+                            </div>
+                            <div id="signupOtpStatus" class="format-status"></div>
                         </div>
 
                         <div class="field">
@@ -1069,6 +1094,128 @@
                 showModal('Server Error', 'Failed to complete Gmail OTP login.', 'error');
             }
         }
+
+        // GMAIL OTP ACCOUNT CREATION FLOW
+        let isSignupEmailVerified = false;
+
+        async function handleSendSignupOtp() {
+            const emailInput = document.getElementById('signupEmail');
+            const email = emailInput.value.trim();
+
+            if (!validateEmailFormat(email)) {
+                showModal('Invalid Email Format', 'Please enter a valid Gmail address (e.g. name@gmail.com).', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/send-signup-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Signup OTP Error', data.message || 'Failed to dispatch OTP code.', 'error');
+                    return;
+                }
+
+                document.getElementById('signupOtpNotice').style.display = 'block';
+                document.getElementById('signupDemoOtpBadge').textContent = `OTP Code: ${data.otpDemoCode}`;
+                document.getElementById('signupOtpField').style.display = 'block';
+                const otpInput = document.getElementById('signupOtpInput');
+                otpInput.focus();
+                if (data.otpDemoCode) otpInput.value = data.otpDemoCode;
+
+                showModal('Gmail OTP Dispatched!', `A 6-digit verification code has been dispatched to ${email}.`, 'info');
+            } catch (err) {
+                showModal('Server Error', 'Failed to send OTP code.', 'error');
+            }
+        }
+
+        async function handleVerifySignupOtp() {
+            const email = document.getElementById('signupEmail').value.trim();
+            const otp = document.getElementById('signupOtpInput').value.trim();
+            const status = document.getElementById('signupOtpStatus');
+
+            if (!otp || otp.length !== 6) {
+                showModal('Validation Error', 'Please enter the 6-digit OTP code sent to your Gmail.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/verify-signup-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('OTP Verification Failed', data.message || 'Invalid or expired OTP code.', 'error');
+                    return;
+                }
+
+                isSignupEmailVerified = true;
+                const sendBtn = document.getElementById('sendSignupOtpBtn');
+                sendBtn.textContent = 'Verified ✔';
+                sendBtn.style.background = 'var(--success)';
+                sendBtn.disabled = true;
+
+                const verifyBtn = document.getElementById('verifySignupOtpBtn');
+                verifyBtn.textContent = 'Verified';
+                verifyBtn.disabled = true;
+
+                status.className = 'format-status valid';
+                status.innerHTML = '✓ Gmail Address Verified Successfully!';
+
+                showModal('Gmail Verified!', 'Your email address has been verified. You can now complete account creation.', 'success');
+            } catch (err) {
+                showModal('Server Error', 'Failed to verify OTP code.', 'error');
+            }
+        }
+
+        // Registration Handler with Gmail OTP Verification Enforcement
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const role = document.getElementById('signupRole').value;
+            const pwd = document.getElementById('signupPassword').value;
+            const confirmPwd = document.getElementById('signupConfirmPassword').value;
+
+            if (!isSignupEmailVerified) {
+                showModal('Verification Required', 'Please click "Send Gmail OTP" and verify your email address before creating an account.', 'error');
+                return;
+            }
+
+            if (pwd !== confirmPwd) {
+                showModal('Password Mismatch', 'The passwords you entered do not match. Please try again.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, role, password: pwd })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    showModal('Registration Error', data.message || 'Failed to create account.', 'error');
+                    return;
+                }
+
+                localStorage.setItem('stocksense_jwt_token', data.token);
+                localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
+
+                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to workspace...`, 'success');
+                setTimeout(() => window.location.href = 'home.html', 1300);
+            } catch (err) {
+                showModal('Server Error', 'Failed to register account.', 'error');
+            }
+        });
 
         // OTP Verification & Password Reset Handler
         async function handleVerifyOtpReset(e) {
