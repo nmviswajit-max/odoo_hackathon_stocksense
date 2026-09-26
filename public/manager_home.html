@@ -7,22 +7,25 @@
     <title>StockSense — Inventory Manager Hub</title>
     <style>
         :root {
-            color-scheme: dark;
-            --ink: #f0f6fc;
-            --muted: #8b949e;
+            color-scheme: light;
+            --ink: #142c3a;
+            --muted: #607480;
             --teal: #087f76;
-            --teal-dark: #06605a;
-            --emerald: #10b981;
-            --emerald-bg: #064e3b;
-            --line: #30363d;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --sidebar-bg: #0f172a;
-            --sidebar-text: #94a3b8;
-            --danger: #ef4444;
-            --danger-bg: #451a1a;
-            --success: #10b981;
-            --warning: #f59e0b;
+            --teal-dark: #076c65;
+            --teal-light: #e8f7f1;
+            --line: #dce6e7;
+            --bg: #f6faf9;
+            --card-bg: #ffffff;
+            --sidebar-bg: #11232e;
+            --sidebar-text: #94aab5;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --success: #059669;
+            --success-bg: #d1fae5;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --emerald: #059669;
+            --emerald-bg: #e8f7f1;
         }
 
         * {
@@ -32,7 +35,7 @@
         }
 
         body {
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
             color: var(--ink);
             background: var(--bg);
             min-height: 100vh;
@@ -43,7 +46,7 @@
         .sidebar {
             width: 270px;
             background: var(--sidebar-bg);
-            border-right: 1px solid var(--line);
+            color: #fff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -62,7 +65,7 @@
             font-size: 20px;
             font-weight: 800;
             letter-spacing: -.5px;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .brand-mark {
@@ -70,20 +73,20 @@
             place-items: center;
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, var(--teal), var(--emerald));
+            background: var(--teal);
             color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+            border-radius: 11px;
+            box-shadow: 0 4px 12px rgba(8, 127, 118, 0.35);
         }
 
         .role-badge-manager {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
+            padding: 6px 14px;
             border-radius: 99px;
-            background: var(--emerald-bg);
-            border: 1px solid var(--emerald);
+            background: rgba(8, 127, 118, 0.25);
+            border: 1px solid #34d399;
             color: #a7f3d0;
             font-size: 11px;
             font-weight: 800;
@@ -102,7 +105,7 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            color: #64748b;
+            color: #5d7582;
             padding: 14px 14px 6px;
         }
 
@@ -117,7 +120,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .nav-item:hover {
@@ -126,15 +129,15 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+            background: var(--teal);
             color: #fff;
-            box-shadow: 0 4px 14px rgba(8, 127, 118, 0.4);
+            box-shadow: 0 4px 14px rgba(8, 127, 118, 0.35);
         }
 
         .sidebar-footer {
             padding: 16px;
-            border-top: 1px solid var(--line);
-            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .profile-pill {
@@ -143,15 +146,15 @@
             justify-content: space-between;
             padding: 10px 12px;
             border-radius: 12px;
-            background: var(--card-bg);
-            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .avatar {
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--teal), var(--emerald));
+            background: var(--teal);
             color: #fff;
             display: grid;
             place-items: center;
@@ -184,6 +187,7 @@
         .topbar-title h2 {
             font-size: 18px;
             font-weight: 800;
+            color: var(--ink);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -193,7 +197,7 @@
             padding: 8px 16px;
             background: var(--danger-bg);
             border: 1px solid var(--danger);
-            color: #fca5a5;
+            color: var(--danger);
             border-radius: 8px;
             font-size: 12px;
             font-weight: 700;
@@ -228,7 +232,7 @@
             padding: 22px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(20, 44, 58, 0.05);
         }
 
         .stat-card::before {
@@ -257,7 +261,7 @@
         .stat-value {
             font-size: 28px;
             font-weight: 800;
-            color: #fff;
+            color: var(--ink);
         }
 
         .stat-desc {
@@ -273,7 +277,7 @@
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 32px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(20, 44, 58, 0.05);
         }
 
         .panel-header {
@@ -288,6 +292,7 @@
         .panel-title {
             font-size: 16px;
             font-weight: 800;
+            color: var(--ink);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -295,7 +300,7 @@
 
         .btn-primary {
             padding: 10px 18px;
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+            background: var(--teal);
             border: 0;
             color: #fff;
             border-radius: 8px;
@@ -305,17 +310,18 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 12px rgba(8, 127, 118, 0.25);
             transition: all 0.2s ease;
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
+            background: var(--teal-dark);
             transform: translateY(-1px);
         }
 
         .btn-disabled {
             padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.05);
+            background: #f1f5f7;
             border: 1px solid var(--line);
             color: var(--muted);
             border-radius: 6px;
@@ -331,10 +337,11 @@
         }
 
         th {
-            background: rgba(255, 255, 255, 0.03);
+            background: #f1f6f8;
             color: var(--muted);
             padding: 12px 16px;
             font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             border-bottom: 1px solid var(--line);
@@ -342,12 +349,12 @@
 
         td {
             padding: 14px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #cbd5e1;
+            border-bottom: 1px solid #eef3f4;
+            color: var(--ink);
         }
 
         tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+            background: #f8fafb;
         }
 
         /* --- MODAL OVERLAY --- */
@@ -357,7 +364,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(20, 44, 58, 0.4);
             backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
@@ -379,13 +386,14 @@
             width: min(100%, 480px);
             border-radius: 16px;
             padding: 28px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 50px rgba(20, 44, 58, 0.15);
         }
 
         .modal-card h3 {
             font-size: 18px;
             margin-bottom: 14px;
-            color: #fff;
+            color: var(--ink);
+            font-weight: 800;
         }
 
         .form-group {
@@ -403,11 +411,17 @@
         .form-group input, .form-group select {
             width: 100%;
             padding: 10px 14px;
-            background: #0f172a;
+            background: #ffffff;
             border: 1px solid var(--line);
             border-radius: 8px;
-            color: #fff;
+            color: var(--ink);
             outline: none;
+            font-size: 13px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(8, 127, 118, 0.15);
         }
 
         .modal-actions {
@@ -424,6 +438,7 @@
             color: var(--muted);
             border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
         }
 
         .tab-section {
@@ -473,7 +488,7 @@
                     <div class="avatar" id="userAvatar">M</div>
                     <div>
                         <div id="userName" style="font-size:13px; font-weight:700;">Manager User</div>
-                        <div id="userEmail" style="font-size:11px; color:var(--muted);">manager@stocksense.com</div>
+                        <div id="userEmail" style="font-size:11px; color:var(--sidebar-text);">manager@stocksense.com</div>
                     </div>
                 </div>
             </div>
@@ -746,7 +761,8 @@
                 const dataOps = await resOps.json();
                 const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
                 renderManagerOpsTable(ops);
-                const pending = ops.filter(o => o.status !== 'Done').length;
+
+                const pending = ops.filter(o => o.status === 'Draft' || o.status === 'Ready').length;
                 document.getElementById('statPendingOps').textContent = pending;
 
                 // 3. Fetch AI
@@ -782,7 +798,7 @@
                     <td><code>${p.sku}</code></td>
                     <td><strong>${p.name}</strong></td>
                     <td>${p.category || 'General'}</td>
-                    <td><strong>${p.quantity}</strong> ${p.uom}</td>
+                    <td><strong>${p.quantity}</strong> ${p.uom || 'Units'}</td>
                     <td>$${(p.unit_price || 0).toFixed(2)}</td>
                     <td><span style="color:${p.quantity > (p.min_threshold || 10) ? 'var(--emerald)' : 'var(--warning)'}; font-weight:700;">${p.status || 'Active'}</span></td>
                     <td>
@@ -807,7 +823,7 @@
                     <td>${o.dest_location || '—'}</td>
                     <td><span style="color:${o.status === 'Done' ? 'var(--emerald)' : 'var(--warning)'}; font-weight:700;">${o.status}</span></td>
                     <td>
-                        ${o.status === 'Done' ? `<span style="font-size:11px; color:var(--emerald);">Validated by ${o.validated_by}</span>` : `<button class="btn-primary" style="padding:4px 10px; font-size:11px;" onclick="handleValidateOp('${o.id}')">Validate Operation</button>`}
+                        ${o.status === 'Done' ? `<span style="font-size:11px; color:var(--emerald); font-weight:700;">Validated by ${o.validated_by || 'Staff'}</span>` : `<button class="btn-primary" style="padding:4px 10px; font-size:11px;" onclick="handleValidateOp('${o.id}')">Validate Operation</button>`}
                     </td>
                 </tr>
             `).join('');
@@ -824,7 +840,7 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    alert(`Operation ${data.reference} validated! Stock updated.`);
+                    alert(`Operation ${data.reference || 'document'} validated! Stock updated.`);
                     loadManagerData();
                 } else {
                     alert(data.message || 'Validation failed.');
@@ -842,10 +858,10 @@
             }
 
             container.innerHTML = ai.recommendations.map(r => `
-                <div style="background:#0f172a; border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:14px;">
+                <div style="background:#f8fafb; border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:14px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                         <div>
-                            <strong style="font-size:15px;">${r.product_name} (${r.sku})</strong>
+                            <strong style="font-size:15px; color:var(--ink);">${r.product_name} (${r.sku})</strong>
                             <div style="font-size:12px; color:var(--muted); margin-top:2px;">Supplier: ${r.supplier}</div>
                         </div>
                         <button class="btn-primary" onclick="handleGeneratePo('${r.sku}', ${r.recommended_order_qty}, '${r.supplier}')">⚡ 1-Click Generate PO (+${r.recommended_order_qty} ${r.uom})</button>
@@ -874,7 +890,7 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    alert(`Purchase Order ${data.reference} auto-generated for ${sku} (+${qty} units)!`);
+                    alert(`Purchase Order ${data.reference || 'document'} auto-generated for ${sku} (+${qty} units)!`);
                     loadManagerData();
                 } else {
                     alert(data.message || 'Failed to generate PO.');
@@ -965,7 +981,7 @@
                 const data = await res.json();
                 if (res.ok) {
                     closeModal('createOpModal');
-                    alert(`Operation ${data.reference} created as Draft!`);
+                    alert(`Operation ${data.reference || 'document'} created as Draft!`);
                     loadManagerData();
                 } else {
                     alert(data.message || 'Failed to create operation.');

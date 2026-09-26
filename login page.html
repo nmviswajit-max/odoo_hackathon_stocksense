@@ -873,6 +873,11 @@
         });
 
         function getRoleHomeUrl(user) {
+            if (!user || !user.role) return 'home.html';
+            const role = user.role.toLowerCase();
+            if (role === 'admin') return 'admin_home.html';
+            if (role === 'manager') return 'manager_home.html';
+            if (role === 'worker') return 'worker_home.html';
             return 'home.html';
         }
 

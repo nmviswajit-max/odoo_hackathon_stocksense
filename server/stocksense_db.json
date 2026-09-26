@@ -83,37 +83,38 @@
       "role": "worker",
       "id": "usr_1790421085913_ch2v6",
       "created_at": "2026-09-26T11:11:25.913Z"
+    },
+    {
+      "name": "vijayendran",
+      "email": "mukesh81108@gmail.com",
+      "password_hash": "$2a$10$9Y8o6jgGPMaUaZ76fi3tTuwGrJfN18K6inpWP4s58qQPuJRNCKYaC",
+      "role": "worker",
+      "id": "usr_1790423789939_ptq5c",
+      "created_at": "2026-09-26T11:56:29.939Z"
+    },
+    {
+      "name": "vijayendran",
+      "email": "mukesh81108@gmail.com",
+      "password_hash": "$2a$10$R2w6MlXY2d4NoT3CmJMkr.mq4Uy5polSxlsWtaDNZaBFoM3YkE7zO",
+      "role": "worker",
+      "id": "usr_1790423790031_0ymjg",
+      "created_at": "2026-09-26T11:56:30.031Z"
     }
   ],
   "products": [
-    {
-      "sku": "CHR-OFF-20",
-      "name": "Ergonomic Office Chairs",
-      "category": "Finished Goods",
-      "uom": "Units",
-      "quantity": 138,
-      "min_threshold": 15,
-      "max_threshold": 100,
-      "unit_price": 145,
-      "locations": {
-        "Main Warehouse": 138
-      },
-      "id": "prd_1790408249458_1s2g",
-      "status": "In Stock",
-      "updated_at": "2026-09-26T07:37:29.458Z"
-    },
     {
       "sku": "ELE-SOL-450",
       "name": "Solar Engine Controller",
       "category": "Electronics",
       "uom": "Units",
-      "quantity": 600,
+      "quantity": 11150,
       "min_threshold": 50,
       "max_threshold": 600,
       "unit_price": 185,
       "locations": {
         "Warehouse 2": 320,
-        "Main Warehouse": 280
+        "Main Warehouse": 10280,
+        "Receiving Bay": 550
       },
       "id": "prd_1790408249476_ojcr",
       "status": "In Stock",
@@ -124,12 +125,12 @@
       "name": "Optical Fiber Cable",
       "category": "Networking",
       "uom": "Meters",
-      "quantity": 500,
+      "quantity": 2000,
       "min_threshold": 100,
       "max_threshold": 2000,
       "unit_price": 4.2,
       "locations": {
-        "Main Warehouse": 0,
+        "Main Warehouse": 1500,
         "Warehouse 2": 500
       },
       "id": "prd_1790408249486_1y8q",
@@ -151,6 +152,23 @@
       "id": "prd_1790408249497_ngur",
       "status": "In Stock",
       "updated_at": "2026-09-26T07:37:29.497Z"
+    },
+    {
+      "sku": "SKU",
+      "name": "fan",
+      "category": "house",
+      "location": "Main Warehouse",
+      "quantity": 500,
+      "min_threshold": 5,
+      "unit_price": 99,
+      "id": "prd_1790423937799_0hii",
+      "max_threshold": 500,
+      "uom": "Units",
+      "locations": {
+        "Main Warehouse": 500
+      },
+      "status": "In Stock",
+      "updated_at": "2026-09-26T11:58:57.799Z"
     }
   ],
   "warehouses": [
@@ -186,6 +204,63 @@
     }
   ],
   "operations": [
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Partner",
+      "source_location": "Supplier (Global Industrial Supplies Ltd)",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "sku": "OPT-FIB-500",
+          "qty": 1500
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790423966150_kukc",
+      "reference": "WH/IN/0031",
+      "date": "2026-09-26T11:59:26.150Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T11:59:32.756Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Partner",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "sku": "ELE-SOL-450",
+          "qty": 10000
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790423956798_dar2",
+      "reference": "WH/IN/0030",
+      "date": "2026-09-26T11:59:16.798Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T11:59:20.500Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Partner",
+      "source_location": "Supplier Dock",
+      "dest_location": "Receiving Bay",
+      "status": "Done",
+      "items": [
+        {
+          "sku": "ELE-SOL-450",
+          "qty": 550
+        }
+      ],
+      "created_by": "vijayendran",
+      "id": "op_1790423813925_9hcq",
+      "reference": "WH/IN/0029",
+      "date": "2026-09-26T11:56:53.925Z",
+      "validated_by": "vijayendran",
+      "validated_at": "2026-09-26T11:56:53.937Z"
+    },
     {
       "doc_type": "Receipt",
       "partner": "Vendor Steel Ltd",
@@ -231,7 +306,7 @@
       "partner": "Vendor Partner",
       "source_location": "Supplier (Global Industrial Supplies Ltd)",
       "dest_location": "Main Warehouse",
-      "status": "Ready",
+      "status": "Done",
       "items": [
         {
           "sku": "CHR-OFF-20",
@@ -241,7 +316,9 @@
       "created_by": "Michael Scott (Manager)",
       "id": "op_1790423152258_08mr",
       "reference": "WH/IN/0026",
-      "date": "2026-09-26T11:45:52.258Z"
+      "date": "2026-09-26T11:45:52.258Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T11:59:05.641Z"
     },
     {
       "doc_type": "Receipt",
@@ -770,6 +847,45 @@
     }
   ],
   "move_history": [
+    {
+      "id": "move_1790423972756_n7rx",
+      "date": "2026-09-26T11:59:32.756Z",
+      "reference": "WH/IN/0031",
+      "doc_type": "Receipt",
+      "product_name": "Optical Fiber Cable",
+      "sku": "OPT-FIB-500",
+      "source_location": "Supplier (Global Industrial Supplies Ltd)",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+1500",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790423960500_tfhh",
+      "date": "2026-09-26T11:59:20.500Z",
+      "reference": "WH/IN/0030",
+      "doc_type": "Receipt",
+      "product_name": "Solar Engine Controller",
+      "sku": "ELE-SOL-450",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+10000",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790423813937_lyk1",
+      "date": "2026-09-26T11:56:53.937Z",
+      "reference": "WH/IN/0029",
+      "doc_type": "Receipt",
+      "product_name": "Solar Engine Controller",
+      "sku": "ELE-SOL-450",
+      "source_location": "Supplier Dock",
+      "dest_location": "Receiving Bay",
+      "qty_change": "+550",
+      "user": "vijayendran",
+      "status": "Done"
+    },
     {
       "id": "move_1790423413670_hf43",
       "date": "2026-09-26T11:50:13.670Z",
