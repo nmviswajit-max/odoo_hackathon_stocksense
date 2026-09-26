@@ -58,14 +58,34 @@ async function runTestSuite() {
     const health = await request('GET', '/api/health');
     assert(health.status === 200, 'API Health check returns 200 OK');
 
-    // 2. Auth & Login
-    console.log('\n2. Authentication & JWT Tokens...');
+    // 2. Auth & Login with Role Tests
+    console.log('\n2. Authentication & Role Permissions Tests...');
     const adminLogin = await request('POST', '/api/auth/login', {
       email: 'admin@stocksense.com',
       password: 'AdminPass123!'
     });
     assert(adminLogin.status === 200 && adminLogin.body.token, 'Admin login succeeds');
     const adminToken = adminLogin.body.token;
+
+    const managerLogin = await request('POST', '/api/auth/login', {
+      email: 'manager@stocksense.com',
+      password: 'ManagerPass123!'
+    });
+    assert(managerLogin.status === 200 && managerLogin.body.user.role === 'manager', 'Manager role authenticated');
+    const managerToken = managerLogin.body.token;
+
+    const workerLogin = await request('POST', '/api/auth/login', {
+      email: 'worker@stocksense.com',
+      password: 'WorkerPass123!'
+    });
+    assert(workerLogin.status === 200 && workerLogin.body.user.role === 'worker', 'Worker role authenticated');
+    const workerToken = workerLogin.body.token;
+
+    // RBAC Test: Worker restricted from creating SKU
+    const workerCreateRes = await request('POST', '/api/products', {
+      sku: 'RESTRICTED-SKU', name: 'Forbidden Product', category: 'Raw Material', location: 'Main Warehouse'
+    }, { 'Authorization': `Bearer ${workerToken}` });
+    assert(workerCreateRes.status === 403, 'Worker restricted from creating SKU (HTTP 403 Forbidden)');
 
     // 3. Testing Email Format Validator
     console.log('\n3. Testing Email Format Validator & Security Checks...');

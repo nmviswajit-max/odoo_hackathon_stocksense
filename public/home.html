@@ -103,7 +103,7 @@
             color: var(--sidebar-text);
             font-size: 13px;
             font-weight: 600;
-            border-radius: 9px;
+            border-radius: 99px;
             cursor: pointer;
             transition: all 0.2s ease;
             margin-bottom: 2px;
@@ -376,8 +376,8 @@
                 <p id="pageSubText">Centralized real-time overview of business inventory operations.</p>
             </div>
             <div class="topbar-actions">
-                <button class="btn-secondary" onclick="openCreateOpModal()">+ New Operation</button>
-                <button class="btn-primary" onclick="openCreateProductModal()">+ Add Product</button>
+                <button class="btn-secondary" id="topbarNewOpBtn" onclick="openCreateOpModal()">+ New Operation</button>
+                <button class="btn-primary" id="topbarAddProductBtn" onclick="openCreateProductModal()">+ Add Product</button>
             </div>
         </header>
 
@@ -469,6 +469,11 @@
 
             <!-- 2. PRODUCTS VIEW -->
             <div id="productsView" class="view-panel">
+                <!-- Role Notice Banner for Warehouse Staff -->
+                <div id="catalogReadOnlyNotice" style="display:none; background:#fff8e6; border:1px solid #ffe0b2; border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#b45309; font-weight:600; align-items:center; gap:8px;">
+                    <span>🔒</span> <span>Warehouse Staff Mode: Read-Only Catalog View. Product SKU creation and deletion are reserved for Managers and System Admins.</span>
+                </div>
+
                 <div class="table-card">
                     <table>
                         <thead>
@@ -480,10 +485,11 @@
                                 <th>Reordering Rules (Min - Max)</th>
                                 <th>Unit Price</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="productsBody">
-                            <tr><td colspan="7" style="text-align:center; padding:20px;">Loading product catalog...</td></tr>
+                            <tr><td colspan="8" style="text-align:center; padding:20px;">Loading product catalog...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -734,94 +740,110 @@
         document.getElementById('sidebarUserRole').textContent = currentUser.role.toUpperCase();
         document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
 
-        function switchView(viewId, element) {
-            document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        // Role-Based UI Adaptations
+        function applyRolePermissions() {
+            const role = (currentUser.role || 'worker').toLowerCase();
+            const roleBadgeEl = document.getElementById('sidebarUserRole');
+            const addProductBtn = document.getElementById('topbarAddProductBtn');
+            const readOnlyNotice = document.getElementById('catalogReadOnlyNotice');
 
-            document.getElementById(viewId).classList.add('active');
-            element.classList.add('active');
-
-            if (viewId === 'dashboardView') loadDashboardData();
-            if (viewId === 'productsView') loadProductsView();
-            if (viewId === 'operationsView') loadOperationsView();
-            if (viewId === 'historyView') loadHistoryView();
-            if (viewId === 'aiView') loadAiPredictions();
-        }
-
-        async function loadDashboardData() {
-            // Load KPIs
-            const kpiRes = await fetch('/api/operations/dashboard-kpis', { headers: { 'Authorization': `Bearer ${token}` } });
-            const kpiData = await kpiRes.json();
-            const kpis = kpiData.kpis || {};
-
-            document.getElementById('kpiTotalProducts').textContent = kpis.totalProducts || 0;
-            document.getElementById('kpiLowStock').textContent = (kpis.lowStockCount || 0) + (kpis.outOfStockCount || 0);
-            document.getElementById('kpiPendingReceipts').textContent = kpis.pendingReceipts || 0;
-            document.getElementById('kpiPendingDeliveries').textContent = kpis.pendingDeliveries || 0;
-            document.getElementById('kpiTransfersScheduled').textContent = kpis.internalTransfersScheduled || 0;
-
-            // Load Filtered Ops
-            const doc_type = document.getElementById('filterDocType').value;
-            const status = document.getElementById('filterStatus').value;
-            const location = document.getElementById('filterLocation').value;
-
-            const url = `/api/operations?doc_type=${doc_type}&status=${status}&location=${location}`;
-            const opsRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-            const opsData = await opsRes.json();
-
-            const tbody = document.getElementById('dashboardOpsBody');
-            tbody.innerHTML = (opsData.operations || []).map(o => `
-                <tr>
-                    <td><strong>${o.reference}</strong></td>
-                    <td><span class="badge badge-info">${o.doc_type}</span></td>
-                    <td>${o.source_location}</td>
-                    <td>${o.dest_location}</td>
-                    <td>${new Date(o.date).toLocaleDateString()}</td>
-                    <td><span class="badge ${o.status==='Done'?'badge-success':'badge-warning'}">${o.status}</span></td>
-                    <td>${o.status !== 'Done' ? `<button class="btn-sm" onclick="validateOp('${o.id}')">Validate ➔</button>` : 'Validated ✓'}</td>
-                </tr>
-            `).join('');
+            if (role === 'admin') {
+                roleBadgeEl.textContent = '👑 SYSTEM ADMIN';
+                roleBadgeEl.style.color = '#a78bfa';
+                if (addProductBtn) addProductBtn.style.display = 'inline-flex';
+                if (readOnlyNotice) readOnlyNotice.style.display = 'none';
+            } else if (role === 'manager') {
+                roleBadgeEl.textContent = '📦 INVENTORY MANAGER';
+                roleBadgeEl.style.color = '#38bdf8';
+                if (addProductBtn) addProductBtn.style.display = 'inline-flex';
+                if (readOnlyNotice) readOnlyNotice.style.display = 'none';
+            } else { // worker / warehouse staff
+                roleBadgeEl.textContent = '🚜 WAREHOUSE STAFF';
+                roleBadgeEl.style.color = '#fbbf24';
+                if (addProductBtn) addProductBtn.style.display = 'none';
+                if (readOnlyNotice) readOnlyNotice.style.display = 'flex';
+                
+                // Disable Stock Adjustment option in Operations Modal for workers
+                const select = document.getElementById('opDocType');
+                if (select) {
+                    for (let opt of select.options) {
+                        if (opt.value === 'Adjustment') opt.disabled = true;
+                    }
+                }
+            }
         }
 
         async function loadProductsView() {
             const res = await fetch('/api/products', { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await res.json();
             const products = data.products || [];
+            const role = (currentUser.role || 'worker').toLowerCase();
 
-            document.getElementById('productsBody').innerHTML = products.map(p => `
-                <tr>
-                    <td>
-                        <div style="font-weight:700;">${p.name}</div>
-                        <div style="font-size:12px; color:var(--muted);">SKU: ${p.sku}</div>
-                    </td>
-                    <td>${p.category}</td>
-                    <td><strong>${p.uom}</strong></td>
-                    <td><strong>${p.quantity} ${p.uom}</strong></td>
-                    <td>Min: ${p.min_threshold} | Max: ${p.max_threshold}</td>
-                    <td>$${parseFloat(p.unit_price).toFixed(2)}</td>
-                    <td><span class="badge ${p.status==='In Stock'?'badge-success':(p.status==='Low Stock'?'badge-warning':'badge-danger')}">${p.status}</span></td>
-                </tr>
-            `).join('');
+            document.getElementById('productsBody').innerHTML = products.map(p => {
+                let actionBtn = `<span style="font-size:12px; color:var(--muted);">🔒 View Only</span>`;
+                if (role === 'admin') {
+                    actionBtn = `<button class="btn-sm" style="color:var(--danger); border-color:var(--danger-bg);" onclick="deleteProduct('${p.id}', '${p.name}')">🗑️ Delete</button>`;
+                } else if (role === 'manager') {
+                    actionBtn = `<button class="btn-sm" onclick="alert('SKU: ${p.sku} details verified.')">✏️ Edit</button>`;
+                }
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700;">${p.name}</div>
+                            <div style="font-size:12px; color:var(--muted);">SKU: ${p.sku}</div>
+                        </td>
+                        <td>${p.category}</td>
+                        <td><strong>${p.uom}</strong></td>
+                        <td><strong>${p.quantity} ${p.uom}</strong></td>
+                        <td>Min: ${p.min_threshold} | Max: ${p.max_threshold}</td>
+                        <td>$${parseFloat(p.unit_price).toFixed(2)}</td>
+                        <td><span class="badge ${p.status==='In Stock'?'badge-success':(p.status==='Low Stock'?'badge-warning':'badge-danger')}">${p.status}</span></td>
+                        <td>${actionBtn}</td>
+                    </tr>
+                `;
+            }).join('');
 
             // Populate Product Select options for Operations Modal
             const select = document.getElementById('opProductSelect');
             select.innerHTML = products.map(p => `<option value="${p.id}">${p.name} (${p.sku}) — Available: ${p.quantity} ${p.uom}</option>`).join('');
         }
 
+        async function deleteProduct(id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}" from inventory? (Admin Only Action)`)) return;
+
+            const res = await fetch(`/api/products/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (!res.ok) alert(data.message);
+            else { alert('Product deleted successfully.'); loadProductsView(); }
+        }
+
         async function loadOperationsView() {
             const res = await fetch('/api/operations', { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await res.json();
-            document.getElementById('allOperationsBody').innerHTML = (data.operations || []).map(o => `
-                <tr>
-                    <td><strong>${o.reference}</strong></td>
-                    <td><span class="badge badge-info">${o.doc_type}</span></td>
-                    <td>${o.source_location}</td>
-                    <td>${o.dest_location}</td>
-                    <td>${o.created_by}</td>
-                    <td><span class="badge ${o.status==='Done'?'badge-success':'badge-warning'}">${o.status}</span></td>
-                    <td>${o.status !== 'Done' ? `<button class="btn-sm" onclick="validateOp('${o.id}')">Validate ➔</button>` : 'Validated ✓'}</td>
-                </tr>
-            `).join('');
+            const role = (currentUser.role || 'worker').toLowerCase();
+
+            document.getElementById('allOperationsBody').innerHTML = (data.operations || []).map(o => {
+                let actionCell = o.status !== 'Done' ? `<button class="btn-sm" onclick="validateOp('${o.id}')">Validate ➔</button>` : 'Validated ✓';
+                if (o.doc_type === 'Adjustment' && role === 'worker') {
+                    actionCell = `<span style="font-size:11px; color:var(--warning); font-weight:700;">🔒 Manager Approval Required</span>`;
+                }
+
+                return `
+                    <tr>
+                        <td><strong>${o.reference}</strong></td>
+                        <td><span class="badge badge-info">${o.doc_type}</span></td>
+                        <td>${o.source_location}</td>
+                        <td>${o.dest_location}</td>
+                        <td>${o.created_by}</td>
+                        <td><span class="badge ${o.status==='Done'?'badge-success':'badge-warning'}">${o.status}</span></td>
+                        <td>${actionCell}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         async function loadHistoryView() {
@@ -842,17 +864,30 @@
         async function loadAiPredictions() {
             const res = await fetch('/api/operations/ai-reorder', { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await res.json();
-            document.getElementById('aiPredictionsBody').innerHTML = (data.predictions || []).map(p => `
-                <tr>
-                    <td><strong>${p.name}</strong><br><span style="font-size:11px; color:var(--muted);">${p.sku}</span></td>
-                    <td>${p.current_stock} ${p.uom}</td>
-                    <td>${p.daily_burn_rate}</td>
-                    <td><strong style="color:${p.days_until_stockout<=5?'var(--danger)':'var(--teal)'}">${p.days_until_stockout} Days</strong></td>
-                    <td><span class="badge ${p.ai_recommendation==='CRITICAL_REORDER_REQUIRED'?'badge-danger':'badge-success'}">${p.ai_recommendation}</span></td>
-                    <td>${p.suggested_reorder_qty} ${p.uom}</td>
-                    <td>${p.ai_recommendation==='CRITICAL_REORDER_REQUIRED'?`<button class="btn-sm" onclick="autoGeneratePO('${p.product_id}', ${p.suggested_reorder_qty})">1-Click Auto PO ⚡</button>`:'Healthy'}</td>
-                </tr>
-            `).join('');
+            const role = (currentUser.role || 'worker').toLowerCase();
+
+            document.getElementById('aiPredictionsBody').innerHTML = (data.predictions || []).map(p => {
+                let poButton = 'Healthy';
+                if (p.ai_recommendation === 'CRITICAL_REORDER_REQUIRED') {
+                    if (role === 'worker') {
+                        poButton = `<span style="font-size:11px; color:var(--muted); font-weight:700;">🔒 PO Trigger Reserved for Manager</span>`;
+                    } else {
+                        poButton = `<button class="btn-sm" onclick="autoGeneratePO('${p.product_id}', ${p.suggested_reorder_qty})">1-Click Auto PO ⚡</button>`;
+                    }
+                }
+
+                return `
+                    <tr>
+                        <td><strong>${p.name}</strong><br><span style="font-size:11px; color:var(--muted);">${p.sku}</span></td>
+                        <td>${p.current_stock} ${p.uom}</td>
+                        <td>${p.daily_burn_rate}</td>
+                        <td><strong style="color:${p.days_until_stockout<=5?'var(--danger)':'var(--teal)'}">${p.days_until_stockout} Days</strong></td>
+                        <td><span class="badge ${p.ai_recommendation==='CRITICAL_REORDER_REQUIRED'?'badge-danger':'badge-success'}">${p.ai_recommendation}</span></td>
+                        <td>${p.suggested_reorder_qty} ${p.uom}</td>
+                        <td>${poButton}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         async function validateOp(id) {
@@ -879,8 +914,11 @@
                 })
             });
             const data = await res.json();
-            await validateOp(data.operation.id);
-            loadAiPredictions();
+            if (!res.ok) alert(data.message);
+            else {
+                await validateOp(data.operation.id);
+                loadAiPredictions();
+            }
         }
 
         function openCreateProductModal() { document.getElementById('createProductModal').classList.add('open'); }
@@ -889,7 +927,7 @@
             document.getElementById('profileModalAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
             document.getElementById('profileModalName').textContent = currentUser.name;
             document.getElementById('profileModalEmail').textContent = currentUser.email;
-            document.getElementById('profileModalRole').textContent = `ROLE: ${currentUser.role.toUpperCase()}`;
+            document.getElementById('profileModalRole').textContent = `ROLE: ${(currentUser.role || 'worker').toUpperCase()}`;
             document.getElementById('profileModal').classList.add('open');
         }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -944,6 +982,7 @@
         }
 
         // Init
+        applyRolePermissions();
         loadDashboardData();
     </script>
 </body>

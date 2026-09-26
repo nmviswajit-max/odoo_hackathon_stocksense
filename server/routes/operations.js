@@ -48,13 +48,21 @@ router.get('/', authenticateToken, (req, res) => {
   }
 });
 
-// POST Create Operation
+// POST Create Operation Document (Role Controlled)
 router.post('/', authenticateToken, (req, res) => {
   try {
     const { doc_type, partner, source_location, dest_location, items } = req.body;
 
     if (!doc_type || !items || !items.length) {
       return res.status(400).json({ error: 'Validation Error', message: 'Document type and line items are required.' });
+    }
+
+    // Role Enforcement: Workers cannot create manual Stock Adjustments
+    if (doc_type === 'Adjustment' && req.user.role === 'worker') {
+      return res.status(403).json({
+        error: 'Access Denied',
+        message: 'Warehouse Staff (workers) cannot create manual Stock Adjustments. Manager or Admin approval required.'
+      });
     }
 
     const newOp = db.addOperation({
@@ -73,9 +81,19 @@ router.post('/', authenticateToken, (req, res) => {
   }
 });
 
-// Validate Operation (Stock Delta Execution)
+// Validate Operation (Stock Delta Execution — Role Controlled)
 router.post('/validate/:id', authenticateToken, (req, res) => {
   try {
+    const ops = db.getOperations();
+    const op = ops.find(o => o.id === req.params.id);
+
+    if (op && op.doc_type === 'Adjustment' && req.user.role === 'worker') {
+      return res.status(403).json({
+        error: 'Access Denied',
+        message: 'Warehouse Staff (workers) cannot validate Stock Adjustments. Manager or Admin approval required.'
+      });
+    }
+
     const validatedOp = db.validateOperation(req.params.id, req.user);
     res.json({ message: 'Operation validated successfully! Inventory balances updated.', operation: validatedOp });
   } catch (err) {
