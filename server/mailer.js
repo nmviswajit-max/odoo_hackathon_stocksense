@@ -14,19 +14,24 @@ async function getTransporter() {
 
   // 1. Gmail SMTP Configuration
   if (gmailUser && gmailPass) {
-    console.log(`📧 Using Gmail SMTP for outbound OTP emails (Account: ${gmailUser})`);
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: gmailUser.trim(),
-        pass: gmailPass.trim()
-      }
-    });
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: gmailUser.trim(),
+          pass: gmailPass.trim()
+        }
+      });
+      console.log(`📧 Configured Gmail SMTP for account: ${gmailUser}`);
+      return transporter;
+    } catch (e) {
+      console.warn('⚠️ Gmail SMTP Transporter creation failed:', e.message);
+    }
   }
 
-  // 2. Custom SMTP Configuration (SendGrid, Brevo, Mailgun, SMTP2GO, etc.)
+  // 2. Custom SMTP Configuration
   if (smtpHost && smtpUser && smtpPass) {
-    console.log(`📧 Using Custom SMTP (${smtpHost}:${smtpPort}) for outbound OTP emails`);
+    console.log(`📧 Configured Custom SMTP (${smtpHost}:${smtpPort})`);
     return nodemailer.createTransport({
       host: smtpHost.trim(),
       port: parseInt(smtpPort, 10),
@@ -38,7 +43,7 @@ async function getTransporter() {
     });
   }
 
-  // 3. Development / Ethereal Real Email Testing Transport
+  // 3. Fallback Development Mailer
   try {
     const testAccount = await nodemailer.createTestAccount();
     console.log(`📧 Created Ethereal Test Mailer (Dev Mode). User: ${testAccount.user}`);
@@ -52,7 +57,6 @@ async function getTransporter() {
       }
     });
   } catch (err) {
-    console.warn('⚠️ Could not create Ethereal test account. Falling back to stream transport.');
     return nodemailer.createTransport({ jsonTransport: true });
   }
 }
@@ -62,8 +66,7 @@ async function getTransporter() {
  */
 async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Creation Email Verification') {
   try {
-    const mailer = await getTransporter();
-
+    let mailer = await getTransporter();
     const sender = process.env.GMAIL_USER || 'no-reply@stocksense.com';
 
     const htmlContent = `
@@ -95,14 +98,27 @@ async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Creation
       html: htmlContent
     };
 
-    const info = await mailer.sendMail(mailOptions);
+    let info;
+    try {
+      info = await mailer.sendMail(mailOptions);
+    } catch (err) {
+      console.warn(`⚠️ Gmail SMTP send failed (${err.message}). Retrying via Ethereal fallback mailer...`);
+      const testAccount = await nodemailer.createTestAccount();
+      const fallbackMailer = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false,
+        auth: { user: testAccount.user, pass: testAccount.pass }
+      });
+      info = await fallbackMailer.sendMail(mailOptions);
+    }
+
     console.log(`=======================================================`);
     console.log(`📩 GMAIL OTP DISPATCH TELEMETRY`);
     console.log(`Recipient: ${recipientEmail}`);
     console.log(`OTP Code : ${otpCode}`);
     if (info && info.messageId) console.log(`Message ID: ${info.messageId}`);
     
-    // Log preview link if test account was used
     const previewUrl = nodemailer.getTestMessageUrl(info);
     if (previewUrl) {
       console.log(`🔗 Ethereal Web Inbox Link: ${previewUrl}`);
@@ -113,7 +129,6 @@ async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Creation
 
   } catch (err) {
     console.error(`❌ Mailer error sending OTP to ${recipientEmail}:`, err.message);
-    // Don't crash backend — allow OTP process to continue so user can proceed
     return { success: false, error: err.message };
   }
 }
