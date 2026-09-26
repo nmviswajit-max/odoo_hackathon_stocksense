@@ -633,17 +633,10 @@
                     <h2>Welcome back</h2>
                     <p class="sub">Sign in to your StockSense workspace.</p>
                     
-                    <!-- Auth Mode Selector Tabs -->
-                    <div class="auth-tabs">
-                        <div class="auth-tab active" id="tabPassword" onclick="switchAuthTab('password')">🔑 Password Sign In</div>
-                        <div class="auth-tab" id="tabGmailOtp" onclick="switchAuthTab('gmailOtp')">📧 Gmail OTP Sign In</div>
-                    </div>
-
-                    <!-- MODE 1: Standard Password Sign In -->
                     <form id="login-form">
                         <div class="field">
-                            <label for="email">Gmail / Email address</label>
-                            <input id="email" type="email" autocomplete="username" placeholder="name@gmail.com" required>
+                            <label for="email">Email address</label>
+                            <input id="email" type="email" autocomplete="username" placeholder="name@company.com" required>
                             <div id="signinEmailStatus" class="format-status"></div>
                         </div>
                         <div class="field">
@@ -657,34 +650,7 @@
                             </div>
                         </div>
                         <button class="primary" type="submit" id="loginBtn">
-                            <span>Sign in with Password</span>
-                            <span aria-hidden="true">→</span>
-                        </button>
-                    </form>
-
-                    <!-- MODE 2: Gmail OTP Sign In Form -->
-                    <form id="gmail-otp-form" style="display:none;" onsubmit="handleSendGmailOtp(event)">
-                        <div class="field">
-                            <label for="gmailOtpEmail">Registered Gmail Address</label>
-                            <input id="gmailOtpEmail" type="email" placeholder="user@gmail.com" required>
-                            <div id="gmailOtpStatus" class="format-status"></div>
-                        </div>
-
-                        <!-- Banner shown after OTP is dispatched -->
-                        <div id="gmailOtpNotice" style="display:none;" class="otp-dispatch-banner">
-                            <strong>📩 Gmail OTP Code Sent!</strong><br>
-                            A 6-digit OTP code was generated & sent to your Gmail. Check code below:
-                            <div id="demoOtpBadge" style="margin-top:6px; font-weight:800; font-size:16px; letter-spacing:3px; color:var(--teal);"></div>
-                        </div>
-
-                        <!-- 6-Digit OTP Box (Appears after clicking Get OTP) -->
-                        <div id="gmailOtpCodeSection" style="display:none;" class="field">
-                            <label for="gmailOtpCodeInput">Enter 6-Digit Gmail OTP</label>
-                            <input id="gmailOtpCodeInput" type="text" placeholder="123456" maxlength="6" style="font-weight:700; letter-spacing:3px; text-align:center; font-size:18px;">
-                        </div>
-
-                        <button class="primary" type="submit" id="gmailOtpSubmitBtn">
-                            <span id="gmailOtpBtnText">Send Gmail OTP Code</span>
+                            <span>Sign in</span>
                             <span aria-hidden="true">→</span>
                         </button>
                     </form>
@@ -998,102 +964,8 @@
         }
 
         setupEmailFormatListener('email', 'signinEmailStatus');
-        setupEmailFormatListener('gmailOtpEmail', 'gmailOtpStatus');
         setupEmailFormatListener('signupEmail', 'signupEmailStatus');
         setupEmailFormatListener('otpEmail', 'modalEmailStatus');
-
-        // SWITCH AUTH MODE TABS (PASSWORD vs GMAIL OTP)
-        let isGmailOtpCodeSent = false;
-
-        function switchAuthTab(tab) {
-            const tabPassword = document.getElementById('tabPassword');
-            const tabGmailOtp = document.getElementById('tabGmailOtp');
-            const loginForm = document.getElementById('login-form');
-            const gmailOtpForm = document.getElementById('gmail-otp-form');
-
-            if (tab === 'password') {
-                tabPassword.classList.add('active');
-                tabGmailOtp.classList.remove('active');
-                loginForm.style.display = 'block';
-                gmailOtpForm.style.display = 'none';
-            } else {
-                tabGmailOtp.classList.add('active');
-                tabPassword.classList.remove('active');
-                loginForm.style.display = 'none';
-                gmailOtpForm.style.display = 'block';
-            }
-        }
-
-        // GMAIL OTP SEND & DIRECT LOGIN HANDLER
-        async function handleSendGmailOtp(e) {
-            e.preventDefault();
-            const email = document.getElementById('gmailOtpEmail').value.trim();
-            const codeInput = document.getElementById('gmailOtpCodeInput');
-
-            if (!validateEmailFormat(email)) {
-                showModal('Invalid Email Format', 'Please enter a valid email address (e.g. user@gmail.com).', 'error');
-                return;
-            }
-
-            // Step 1: Request OTP code from server if not sent yet
-            if (!isGmailOtpCodeSent) {
-                try {
-                    const res = await fetch(`${API_BASE}/send-otp`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email })
-                    });
-
-                    const data = await res.json();
-                    if (!res.ok) {
-                        showModal('Gmail OTP Error', data.message || 'Failed to dispatch Gmail OTP code.', 'error');
-                        return;
-                    }
-
-                    isGmailOtpCodeSent = true;
-                    document.getElementById('gmailOtpNotice').style.display = 'block';
-                    document.getElementById('demoOtpBadge').textContent = `OTP Code: ${data.otpDemoCode}`;
-                    document.getElementById('gmailOtpCodeSection').style.display = 'block';
-                    document.getElementById('gmailOtpBtnText').textContent = 'Verify Gmail OTP & Sign In';
-                    codeInput.focus();
-                    if (data.otpDemoCode) codeInput.value = data.otpDemoCode; // Auto-fill convenience
-
-                    showModal('Gmail OTP Dispatched!', `A 6-digit verification code has been dispatched to ${email}.`, 'info');
-                } catch (err) {
-                    showModal('Server Error', 'Failed to dispatch OTP code.', 'error');
-                }
-                return;
-            }
-
-            // Step 2: Verify OTP code and log in
-            const otpCode = codeInput.value.trim();
-            if (!otpCode || otpCode.length !== 6) {
-                showModal('Validation Error', 'Please enter a 6-digit OTP verification code.', 'error');
-                return;
-            }
-
-            try {
-                const res = await fetch(`${API_BASE}/verify-otp-login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, otp: otpCode })
-                });
-
-                const data = await res.json();
-                if (!res.ok) {
-                    showModal('OTP Verification Failed', data.message || 'Invalid or expired OTP code.', 'error');
-                    return;
-                }
-
-                localStorage.setItem('stocksense_jwt_token', data.token);
-                localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
-
-                showModal('Gmail OTP Login Successful!', `Welcome back, ${data.user.name}! Redirecting to workspace...`, 'success');
-                setTimeout(() => window.location.href = 'home.html', 1100);
-            } catch (err) {
-                showModal('Server Error', 'Failed to complete Gmail OTP login.', 'error');
-            }
-        }
 
         // GMAIL OTP ACCOUNT CREATION FLOW
         let isSignupEmailVerified = false;
