@@ -4,30 +4,28 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>StockSense — Odoo-Grade Inventory Workspace</title>
+    <title>StockSense — Workspace Terminal</title>
     <style>
         :root {
-            color-scheme: dark;
-            --ink: #f0f6fc;
-            --muted: #8b949e;
+            color-scheme: light;
+            --ink: #142c3a;
+            --muted: #607480;
             --teal: #087f76;
-            --teal-dark: #06605a;
-            --emerald: #10b981;
-            --emerald-bg: #064e3b;
-            --purple: #a855f7;
-            --purple-bg: #2e1065;
-            --purple-border: #6b21a8;
-            --blue: #38bdf8;
-            --blue-bg: #0c4a6e;
-            --line: #30363d;
-            --bg: #0d1117;
-            --card-bg: #161b22;
-            --sidebar-bg: #0d1117;
-            --sidebar-text: #8b949e;
-            --danger: #f85149;
-            --danger-bg: #3c1e1e;
-            --success: #3fb950;
-            --warning: #d29922;
+            --teal-dark: #076c65;
+            --teal-light: #e8f7f1;
+            --line: #dce6e7;
+            --bg: #f6faf9;
+            --sidebar-bg: #11232e;
+            --sidebar-text: #94aab5;
+            --card-bg: #ffffff;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --success: #059669;
+            --success-bg: #d1fae5;
+            --purple: #7c3aed;
+            --purple-bg: #f3e8ff;
         }
 
         * {
@@ -37,18 +35,18 @@
         }
 
         body {
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
             color: var(--ink);
             background: var(--bg);
             min-height: 100vh;
             display: flex;
         }
 
-        /* --- SIDEBAR NAVIGATION --- */
+        /* --- LEFT SIDEBAR NAVIGATION --- */
         .sidebar {
             width: 270px;
             background: var(--sidebar-bg);
-            border-right: 1px solid var(--line);
+            color: #fff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -67,7 +65,7 @@
             font-size: 20px;
             font-weight: 800;
             letter-spacing: -.5px;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .brand-mark {
@@ -75,17 +73,17 @@
             place-items: center;
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, var(--teal), var(--emerald));
+            background: var(--teal);
             color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(8, 127, 118, 0.4);
+            border-radius: 11px;
+            box-shadow: 0 4px 12px rgba(8, 127, 118, 0.35);
         }
 
-        .role-badge {
+        .role-badge-assigned {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 99px;
             font-size: 11px;
             font-weight: 800;
@@ -93,21 +91,21 @@
             text-transform: uppercase;
         }
 
-        .role-badge.admin {
-            background: var(--purple-bg);
-            border: 1px solid var(--purple-border);
-            color: #d8b4fe;
+        .role-badge-assigned.admin {
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid #a78bfa;
+            color: #ddd6fe;
         }
 
-        .role-badge.manager {
-            background: var(--emerald-bg);
-            border: 1px solid var(--emerald);
+        .role-badge-assigned.manager {
+            background: rgba(8, 127, 118, 0.25);
+            border: 1px solid #34d399;
             color: #a7f3d0;
         }
 
-        .role-badge.worker {
-            background: var(--blue-bg);
-            border: 1px solid var(--blue);
+        .role-badge-assigned.worker {
+            background: rgba(14, 165, 233, 0.2);
+            border: 1px solid #38bdf8;
             color: #bae6fd;
         }
 
@@ -122,7 +120,7 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            color: #484f58;
+            color: #5d7582;
             padding: 14px 14px 6px;
         }
 
@@ -137,7 +135,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .nav-item:hover {
@@ -146,15 +144,15 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+            background: var(--teal);
             color: #fff;
-            box-shadow: 0 4px 14px rgba(8, 127, 118, 0.4);
+            box-shadow: 0 4px 14px rgba(8, 127, 118, 0.35);
         }
 
         .sidebar-footer {
             padding: 16px;
-            border-top: 1px solid var(--line);
-            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .profile-pill {
@@ -163,15 +161,15 @@
             justify-content: space-between;
             padding: 10px 12px;
             border-radius: 12px;
-            background: var(--card-bg);
-            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .avatar {
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--teal), var(--emerald));
+            background: var(--teal);
             color: #fff;
             display: grid;
             place-items: center;
@@ -190,7 +188,7 @@
 
         .topbar {
             height: 70px;
-            background: var(--card-bg);
+            background: #ffffff;
             border-bottom: 1px solid var(--line);
             display: flex;
             align-items: center;
@@ -199,23 +197,25 @@
             position: sticky;
             top: 0;
             z-index: 90;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
 
         .topbar-title h2 {
             font-size: 18px;
             font-weight: 800;
+            color: var(--ink);
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .btn-logout {
-            padding: 8px 16px;
+            padding: 9px 18px;
             background: var(--danger-bg);
-            border: 1px solid var(--danger);
-            color: #ff7b72;
+            border: 1px solid #fca5a5;
+            color: var(--danger);
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -224,30 +224,6 @@
         .btn-logout:hover {
             background: var(--danger);
             color: #fff;
-        }
-
-        .role-btn {
-            padding: 6px 12px;
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 750;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .role-btn:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .role-btn.active {
-            background: var(--teal);
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(8, 127, 118, 0.4);
-            border-color: var(--teal);
         }
 
         .content {
@@ -272,7 +248,7 @@
             padding: 22px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 24px rgba(8, 127, 118, 0.06);
         }
 
         .stat-card::before {
@@ -288,7 +264,6 @@
         .stat-card.purple::before { background: var(--purple); }
         .stat-card.success::before { background: var(--success); }
         .stat-card.warning::before { background: var(--warning); }
-        .stat-card.blue::before { background: var(--blue); }
 
         .stat-label {
             font-size: 12px;
@@ -302,7 +277,7 @@
         .stat-value {
             font-size: 28px;
             font-weight: 800;
-            color: #fff;
+            color: var(--ink);
         }
 
         .stat-desc {
@@ -318,7 +293,7 @@
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 32px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 24px rgba(8, 127, 118, 0.06);
         }
 
         .panel-header {
@@ -333,6 +308,7 @@
         .panel-title {
             font-size: 16px;
             font-weight: 800;
+            color: var(--ink);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -340,7 +316,7 @@
 
         .btn-primary {
             padding: 10px 18px;
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+            background: var(--teal);
             border: 0;
             color: #fff;
             border-radius: 8px;
@@ -350,19 +326,20 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 12px rgba(8, 127, 118, 0.3);
             transition: all 0.2s ease;
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
+            background: var(--teal-dark);
             transform: translateY(-1px);
         }
 
         .btn-danger-sm {
             padding: 6px 12px;
             background: var(--danger-bg);
-            border: 1px solid var(--danger);
-            color: #ff7b72;
+            border: 1px solid #fca5a5;
+            color: var(--danger);
             border-radius: 6px;
             font-size: 12px;
             font-weight: 700;
@@ -376,8 +353,8 @@
 
         .btn-disabled {
             padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--line);
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
             color: var(--muted);
             border-radius: 6px;
             font-size: 11px;
@@ -392,8 +369,8 @@
         }
 
         th {
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--muted);
+            background: var(--teal-light);
+            color: var(--teal-dark);
             padding: 12px 16px;
             font-size: 11px;
             text-transform: uppercase;
@@ -403,18 +380,18 @@
 
         td {
             padding: 14px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #c9d1d9;
+            border-bottom: 1px solid var(--line);
+            color: var(--ink);
         }
 
         tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+            background: #f8fafc;
         }
 
         .role-selector {
-            background: #21262d;
+            background: #fff;
             border: 1px solid var(--line);
-            color: #fff;
+            color: var(--ink);
             padding: 6px 10px;
             border-radius: 6px;
             font-size: 12px;
@@ -425,13 +402,18 @@
         .search-input {
             width: 100%;
             padding: 14px 18px;
-            background: #0d1117;
+            background: #fff;
             border: 1px solid var(--line);
             border-radius: 12px;
-            color: #fff;
+            color: var(--ink);
             font-size: 15px;
             outline: none;
             margin-bottom: 20px;
+        }
+
+        .search-input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(8, 127, 118, 0.15);
         }
 
         /* --- MODAL OVERLAY --- */
@@ -441,8 +423,8 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
+            background: rgba(20, 44, 58, 0.45);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -458,18 +440,18 @@
         }
 
         .modal-card {
-            background: var(--card-bg);
+            background: #fff;
             border: 1px solid var(--line);
             width: min(100%, 480px);
             border-radius: 16px;
             padding: 28px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 50px rgba(7, 108, 101, 0.2);
         }
 
         .modal-card h3 {
             font-size: 18px;
             margin-bottom: 14px;
-            color: #fff;
+            color: var(--ink);
         }
 
         .form-group {
@@ -487,10 +469,10 @@
         .form-group input, .form-group select {
             width: 100%;
             padding: 10px 14px;
-            background: #0d1117;
+            background: #fff;
             border: 1px solid var(--line);
             border-radius: 8px;
-            color: #fff;
+            color: var(--ink);
             outline: none;
         }
 
@@ -518,8 +500,8 @@
             display: block;
         }
 
-        /* --- ROLE VISIBILITY CONTROLS --- */
-        .show-admin, .show-manager, .show-worker { display: none !important; }
+        /* --- STRICT ROLE VISIBILITY --- */
+        .show-admin, .show-manager, .show-worker, .show-admin-manager { display: none !important; }
 
         body.role-admin .show-admin { display: flex !important; }
         body.role-admin tr.show-admin { display: table-row !important; }
@@ -539,15 +521,19 @@
 </head>
 
 <body>
-    <!-- LEFT SIDEBAR NAVIGATION (ROLE ADAPTIVE) -->
+    <!-- LEFT SIDEBAR NAVIGATION (LOCKED TO ASSIGNED ROLE) -->
     <aside class="sidebar">
         <div>
             <div class="sidebar-brand">
-                <span class="brand-mark">⚡</span>
-                StockSense
+                <span class="brand-mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                        <path d="m4.5 7.7 7.5 4.2 7.5-4.2M12 12v8.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                    </svg>
+                </span>StockSense
             </div>
             <div style="padding: 12px 24px;">
-                <span id="roleBadge" class="role-badge worker">📦 Loading Role...</span>
+                <span id="roleBadge" class="role-badge-assigned">Loading Assigned Role...</span>
             </div>
             <nav class="nav-group">
                 <div class="nav-label">Workspace Navigation</div>
@@ -557,12 +543,12 @@
                     📊 Overview Dashboard
                 </div>
 
-                <!-- Admin Only Nav Item -->
+                <!-- Admin Only Nav -->
                 <div class="nav-item show-admin" onclick="switchTab('users', this)">
-                    👥 User Roles &amp; Permissions
+                    👥 User Permissions &amp; Roles
                 </div>
 
-                <!-- Admin & Manager Nav Items -->
+                <!-- Admin & Manager Nav -->
                 <div class="nav-item show-admin-manager" onclick="switchTab('products', this)">
                     📦 Product Catalog &amp; SKUs
                 </div>
@@ -573,15 +559,15 @@
                     🤖 AI Predictive Reorder
                 </div>
 
-                <!-- Worker Only Nav Items -->
+                <!-- Worker Only Nav -->
                 <div class="nav-item show-worker" onclick="switchTab('worker-terminal', this)">
                     ⚡ Movement Terminal
                 </div>
                 <div class="nav-item show-worker" onclick="switchTab('sku-lookup', this)">
-                    🔍 SKU &amp; Bin Finder (Read-Only)
+                    🔍 SKU &amp; Aisle Finder (Read-Only)
                 </div>
 
-                <!-- Common Move History -->
+                <!-- Common Movement Ledger -->
                 <div class="nav-item" onclick="switchTab('moves', this)">
                     📜 Stock Movement Ledger
                 </div>
@@ -593,8 +579,8 @@
                 <div style="display:flex; align-items:center; gap:10px;">
                     <div class="avatar" id="userAvatar">U</div>
                     <div>
-                        <div id="userName" style="font-size:13px; font-weight:700;">User Name</div>
-                        <div id="userEmail" style="font-size:11px; color:var(--muted);">user@stocksense.com</div>
+                        <div id="userName" style="font-size:13px; font-weight:700; color:#fff;">User Name</div>
+                        <div id="userEmail" style="font-size:11px; color:var(--sidebar-text);">user@stocksense.com</div>
                     </div>
                 </div>
             </div>
@@ -607,23 +593,12 @@
             <div class="topbar-title">
                 <h2 id="pageHeading">StockSense Terminal</h2>
             </div>
-
-            <!-- INTERACTIVE ROLE SWITCHER -->
-            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:4px 10px; border-radius:10px; border:1px solid var(--line);">
-                <span style="font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Role View:</span>
-                <div style="display:flex; gap:4px;">
-                    <button id="btnRoleAdmin" class="role-btn" onclick="switchRoleView('admin')">👑 Admin</button>
-                    <button id="btnRoleManager" class="role-btn" onclick="switchRoleView('manager')">👔 Manager</button>
-                    <button id="btnRoleWorker" class="role-btn" onclick="switchRoleView('worker')">📦 Worker</button>
-                </div>
-            </div>
-
             <button class="btn-logout" onclick="logout()">Sign out</button>
         </header>
 
         <div class="content">
 
-            <!-- TAB 1: OVERVIEW DASHBOARD (DYNAMIC KPIS PER ROLE) -->
+            <!-- TAB 1: OVERVIEW DASHBOARD -->
             <div id="dashboardTab" class="tab-section active">
                 <div class="stats-grid">
                     <div class="stat-card purple show-admin">
@@ -653,7 +628,7 @@
                         <div class="stat-value" id="statWorkerCompletedMoves">0</div>
                         <div class="stat-desc">Executed during your shift</div>
                     </div>
-                    <div class="stat-card blue show-worker">
+                    <div class="stat-card show-worker">
                         <div class="stat-label">Pending Transfers</div>
                         <div class="stat-value" id="statWorkerPendingTransfers">0</div>
                         <div class="stat-desc">Bin movement requests</div>
@@ -667,9 +642,9 @@
 
                 <div class="panel">
                     <div class="panel-header">
-                        <div class="panel-title">🎯 Role Workspace Welcome</div>
+                        <div class="panel-title">🎯 Role Workspace Overview</div>
                     </div>
-                    <p id="welcomeDescription" style="color:var(--muted); font-size:13px; line-height:1.6;">
+                    <p id="welcomeDescription" style="color:var(--muted); font-size:14px; line-height:1.6;">
                         Welcome to StockSense Odoo-Grade Inventory Terminal.
                     </p>
                 </div>
@@ -680,7 +655,7 @@
                 <div class="panel">
                     <div class="panel-header">
                         <div class="panel-title">👥 User Management &amp; Dynamic Role Assignment</div>
-                        <span style="font-size:12px; color:var(--purple);">Admin Authority Panel</span>
+                        <span style="font-size:12px; color:var(--purple); font-weight:700;">Admin Authority Panel</span>
                     </div>
                     <table>
                         <thead>
@@ -719,7 +694,7 @@
                             </tr>
                         </thead>
                         <tbody id="productsTableBody">
-                            <tr><td colspan="7">Loading catalog...</td></tr>
+                            <tr><td colspan="7">Loading product catalog...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -744,7 +719,7 @@
                             </tr>
                         </thead>
                         <tbody id="opsTableBody">
-                            <tr><td colspan="6">Loading operations...</td></tr>
+                            <tr><td colspan="6">Loading operations ledger...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -756,7 +731,7 @@
                     <div class="panel-header">
                         <div class="panel-title">🤖 AI Predictive Reorder Engine &amp; 1-Click Purchase Orders</div>
                     </div>
-                    <div id="aiRecsContainer">Loading AI insights...</div>
+                    <div id="aiRecsContainer">Loading AI analytics...</div>
                 </div>
             </div>
 
@@ -808,7 +783,7 @@
                     <div class="panel-header">
                         <div class="panel-title">🔍 SKU &amp; Aisle Location Finder (Read-Only)</div>
                     </div>
-                    <input type="text" id="skuSearchInput" class="search-input" placeholder="🔍 Search product name, SKU code, or aisle..." oninput="filterWorkerProducts()">
+                    <input type="text" id="skuSearchInput" class="search-input" placeholder="🔍 Search product name, SKU code, or aisle location..." oninput="filterWorkerProducts()">
                     <table>
                         <thead>
                             <tr>
@@ -821,7 +796,7 @@
                             </tr>
                         </thead>
                         <tbody id="workerLookupTableBody">
-                            <tr><td colspan="6">Loading lookup...</td></tr>
+                            <tr><td colspan="6">Loading SKU directory...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -865,7 +840,7 @@
                 </div>
                 <div class="form-group">
                     <label>Product Name</label>
-                    <input type="text" id="newSkuName" placeholder="e.g. Ergonomic Desk" required>
+                    <input type="text" id="newSkuName" placeholder="e.g. Ergonomic Office Chair" required>
                 </div>
                 <div class="form-group">
                     <label>Category</label>
@@ -944,7 +919,7 @@
             document.getElementById('userEmail').textContent = currentUser.email;
             document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
 
-            // Set role styling on body
+            // Enforce strict role styling on body
             document.body.className = `role-${role}`;
 
             const badge = document.getElementById('roleBadge');
@@ -952,43 +927,21 @@
             const welcomeDesc = document.getElementById('welcomeDescription');
 
             if (role === 'admin') {
-                badge.className = 'role-badge admin';
+                badge.className = 'role-badge-assigned admin';
                 badge.textContent = '👑 System Administrator';
                 heading.textContent = '👑 System Administrator Workspace';
-                welcomeDesc.textContent = 'Welcome Admin! You have full authority over user permissions, master SKU creation/deletion, global operations audit logs, and AI forecasting.';
+                welcomeDesc.textContent = 'Welcome System Admin! You have exclusive authority over user role assignments, master SKU creation/deletion, global operations audit logs, and executive AI forecasting.';
             } else if (role === 'manager') {
-                badge.className = 'role-badge manager';
+                badge.className = 'role-badge-assigned manager';
                 badge.textContent = '👔 Inventory Manager';
                 heading.textContent = '👔 Inventory Manager Hub';
-                welcomeDesc.textContent = 'Welcome Manager! Monitor inventory replenishment KPIs, manage SKU catalog, process operations, and run 1-Click AI purchase orders.';
+                welcomeDesc.textContent = 'Welcome Inventory Manager! Monitor inventory replenishment KPIs, manage SKU details, process warehouse operations, and execute 1-Click AI purchase orders.';
             } else {
-                badge.className = 'role-badge worker';
+                badge.className = 'role-badge-assigned worker';
                 badge.textContent = '📦 Warehouse Operative';
                 heading.textContent = '🏭 Warehouse Operations Terminal';
-                welcomeDesc.textContent = 'Welcome Operative! Use the Movement Terminal for fast bin transfers, pick & pack shipping, and read-only SKU lookup.';
+                welcomeDesc.textContent = 'Welcome Warehouse Operative! Use the Movement Terminal for fast bin transfers, pick & pack shipping, and read-only SKU lookup.';
             }
-
-            // Highlight active role selector button
-            ['Admin', 'Manager', 'Worker'].forEach(r => {
-                const btn = document.getElementById(`btnRole${r}`);
-                if (btn) {
-                    if (r.toLowerCase() === role) btn.classList.add('active');
-                    else btn.classList.remove('active');
-                }
-            });
-        }
-
-        function switchRoleView(newRole) {
-            if (!currentUser) return;
-            currentUser.role = newRole;
-            localStorage.setItem('stocksense_current_user', JSON.stringify(currentUser));
-            
-            checkAuth();
-            loadDashboardData();
-
-            // Default to overview dashboard tab
-            const firstNav = document.querySelector('.nav-item');
-            if (firstNav) switchTab('dashboard', firstNav);
         }
 
         function logout() {
@@ -1002,18 +955,22 @@
             document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
             
             element.classList.add('active');
-            document.getElementById(`${tabId}Tab`).classList.add('active');
+            const target = document.getElementById(`${tabId}Tab`);
+            if (target) target.classList.add('active');
         }
 
         async function loadDashboardData() {
             const role = (currentUser.role || 'worker').toLowerCase();
 
             try {
-                // 1. Products
+                // 1. Fetch Products
                 const resProducts = await fetch(`${API_BASE}/products`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                allProducts = await resProducts.json();
+                const dataProducts = await resProducts.json();
+                // Defensive extraction of array
+                allProducts = Array.isArray(dataProducts) ? dataProducts : (dataProducts.products || []);
+
                 renderProductsTable(allProducts);
                 renderWorkerLookupTable(allProducts);
                 populateProductSelects(allProducts);
@@ -1025,21 +982,23 @@
                 const valuation = allProducts.reduce((acc, p) => acc + (p.quantity * (p.unit_price || 0)), 0);
                 document.getElementById('statValuation').textContent = `$${valuation.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
-                // 2. Users (Admin Only)
+                // 2. Fetch Users (Admin Only)
                 if (role === 'admin') {
                     const resUsers = await fetch(`${API_BASE}/auth/users`, {
                         headers: { 'Authorization': `Bearer ${jwtToken}` }
                     });
-                    const users = await resUsers.json();
+                    const dataUsers = await resUsers.json();
+                    const users = Array.isArray(dataUsers) ? dataUsers : (dataUsers.users || []);
                     renderUsersTable(users);
                     document.getElementById('statUsersCount').textContent = users.length || 0;
                 }
 
-                // 3. Operations
+                // 3. Fetch Operations
                 const resOps = await fetch(`${API_BASE}/operations`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const ops = await resOps.json();
+                const dataOps = await resOps.json();
+                const ops = Array.isArray(dataOps) ? dataOps : (dataOps.operations || []);
                 renderOpsTable(ops);
 
                 const pendingInt = ops.filter(o => o.doc_type === 'Internal' && o.status !== 'Done').length;
@@ -1047,20 +1006,21 @@
                 document.getElementById('statWorkerPendingTransfers').textContent = pendingInt;
                 document.getElementById('statWorkerPendingReceipts').textContent = pendingIn;
 
-                // 4. AI Engine
+                // 4. Fetch AI Insights (Admin & Manager)
                 if (role === 'admin' || role === 'manager') {
-                    const resAi = await fetch(`${API_BASE}/inventory/ai/reorder-recommendations`, {
+                    const resAi = await fetch(`${API_BASE}/operations/ai-reorder`, {
                         headers: { 'Authorization': `Bearer ${jwtToken}` }
                     });
-                    const aiData = await resAi.json();
-                    renderAiData(aiData);
+                    const dataAi = await resAi.json();
+                    renderAiData(dataAi);
                 }
 
-                // 5. Moves
+                // 5. Fetch Move History
                 const resMoves = await fetch(`${API_BASE}/operations/move-history`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
-                const moves = await resMoves.json();
+                const dataMoves = await resMoves.json();
+                const moves = Array.isArray(dataMoves) ? dataMoves : (dataMoves.move_history || []);
                 renderMovesTable(moves);
 
                 const myMoves = moves.filter(m => m.user === currentUser.name);
@@ -1074,7 +1034,7 @@
         function renderUsersTable(users) {
             const tbody = document.getElementById('usersTableBody');
             if (!users || users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5">No users registered.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5">No users registered in database.</td></tr>`;
                 return;
             }
 
@@ -1090,7 +1050,7 @@
                         </select>
                     </td>
                     <td>${new Date(u.created_at || Date.now()).toLocaleDateString()}</td>
-                    <td><span style="font-size:11px; color:var(--teal);">Active User</span></td>
+                    <td><span style="font-size:11px; color:var(--teal); font-weight:700;">Active Account</span></td>
                 </tr>
             `).join('');
         }
@@ -1118,7 +1078,7 @@
         function renderProductsTable(products) {
             const tbody = document.getElementById('productsTableBody');
             if (!products || products.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7">No products found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7">No products found in catalog.</td></tr>`;
                 return;
             }
 
@@ -1129,7 +1089,7 @@
                     <td><code>${p.sku}</code></td>
                     <td><strong>${p.name}</strong></td>
                     <td>${p.category || 'General'}</td>
-                    <td><strong>${p.quantity}</strong> ${p.uom}</td>
+                    <td><strong>${p.quantity}</strong> ${p.uom || 'Units'}</td>
                     <td>$${(p.unit_price || 0).toFixed(2)}</td>
                     <td><span style="color:${p.quantity > (p.min_threshold || 10) ? 'var(--success)' : 'var(--danger)'}; font-weight:700;">${p.status || 'Active'}</span></td>
                     <td>
@@ -1143,14 +1103,14 @@
         }
 
         async function handleDeleteProduct(id, name) {
-            if (!confirm(`ADMIN CONFIRMATION: Permanently delete SKU "${name}"?`)) return;
+            if (!confirm(`ADMIN CONFIRMATION: Permanently delete SKU "${name}"? This action cannot be undone.`)) return;
             try {
                 const res = await fetch(`${API_BASE}/products/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
                 if (res.ok) {
-                    alert(`SKU "${name}" deleted.`);
+                    alert(`SKU "${name}" deleted successfully by Admin.`);
                     loadDashboardData();
                 } else {
                     const data = await res.json();
@@ -1162,7 +1122,7 @@
         function renderOpsTable(ops) {
             const tbody = document.getElementById('opsTableBody');
             if (!ops || ops.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6">No operations logged.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6">No operations logged in database.</td></tr>`;
                 return;
             }
 
@@ -1174,7 +1134,7 @@
                     <td>${o.dest_location || '—'}</td>
                     <td><span style="color:${o.status === 'Done' ? 'var(--success)' : 'var(--warning)'}; font-weight:700;">${o.status}</span></td>
                     <td>
-                        ${o.status === 'Done' ? `<span style="font-size:11px; color:var(--success);">Validated by ${o.validated_by}</span>` : `<button class="btn-primary" style="padding:4px 10px; font-size:11px;" onclick="handleValidateOp('${o.id}')">Validate Operation</button>`}
+                        ${o.status === 'Done' ? `<span style="font-size:11px; color:var(--success); font-weight:700;">Validated by ${o.validated_by || 'Staff'}</span>` : `<button class="btn-primary" style="padding:4px 10px; font-size:11px;" onclick="handleValidateOp('${o.id}')">Validate Operation</button>`}
                     </td>
                 </tr>
             `).join('');
@@ -1182,7 +1142,7 @@
 
         async function handleValidateOp(opId) {
             try {
-                const res = await fetch(`${API_BASE}/operations/${opId}/validate`, {
+                const res = await fetch(`${API_BASE}/operations/validate/${opId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1191,7 +1151,7 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    alert(`Operation ${data.reference} validated! Stock updated.`);
+                    alert(`Operation ${data.operation ? data.operation.reference : opId} validated! Stock updated.`);
                     loadDashboardData();
                 } else { alert(data.message || 'Validation failed.'); }
             } catch (err) { alert('Connection error.'); }
@@ -1199,22 +1159,24 @@
 
         function renderAiData(ai) {
             const container = document.getElementById('aiRecsContainer');
-            if (!ai || !ai.recommendations || ai.recommendations.length === 0) {
-                container.innerHTML = `<p style="color:var(--muted);">All stock levels optimal. No automated POs needed currently.</p>`;
+            const predictions = Array.isArray(ai) ? ai : (ai.predictions || ai.recommendations || []);
+
+            if (!predictions || predictions.length === 0) {
+                container.innerHTML = `<p style="color:var(--muted); font-size:13px;">All stock levels optimal. No automated POs needed currently.</p>`;
                 return;
             }
 
-            container.innerHTML = ai.recommendations.map(r => `
-                <div style="background:#0d1117; border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:14px;">
+            container.innerHTML = predictions.map(r => `
+                <div style="background:var(--teal-light); border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:14px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                         <div>
-                            <strong style="font-size:15px;">${r.product_name} (${r.sku})</strong>
-                            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Supplier: ${r.supplier}</div>
+                            <strong style="font-size:15px; color:var(--ink);">${r.name || r.product_name} (${r.sku})</strong>
+                            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Supplier: ${r.supplier || 'Global Supplier'}</div>
                         </div>
-                        <button class="btn-primary" onclick="handleGeneratePo('${r.sku}', ${r.recommended_order_qty}, '${r.supplier}')">⚡ 1-Click Generate PO (+${r.recommended_order_qty} ${r.uom})</button>
+                        <button class="btn-primary" onclick="handleGeneratePo('${r.sku}', ${r.suggested_reorder_qty || r.recommended_order_qty || 25}, '${r.supplier || 'Global Supplier'}')">⚡ 1-Click Generate PO (+${r.suggested_reorder_qty || r.recommended_order_qty || 25} ${r.uom || 'Units'})</button>
                     </div>
                     <div style="font-size:12px; color:var(--warning); font-weight:700;">
-                        ⚠️ Stockout projected in ${r.projected_stockout_days} days! Current Stock: ${r.current_stock}
+                        ⚠️ Stockout projected in ${r.days_until_stockout || r.projected_stockout_days || 3} days! Current Stock: ${r.current_stock}
                     </div>
                 </div>
             `).join('');
@@ -1237,7 +1199,7 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    alert(`Purchase Order ${data.reference} auto-generated!`);
+                    alert(`Purchase Order ${data.operation ? data.operation.reference : 'PO'} auto-generated!`);
                     loadDashboardData();
                 } else { alert(data.message || 'Failed to generate PO.'); }
             } catch (err) { alert('Connection error.'); }
@@ -1246,7 +1208,7 @@
         function renderMovesTable(moves) {
             const tbody = document.getElementById('movesTableBody');
             if (!moves || moves.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6">No movement history.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6">No movement history logged.</td></tr>`;
                 return;
             }
 
@@ -1274,7 +1236,7 @@
                     <td><code>${p.sku}</code></td>
                     <td><strong>${p.name}</strong></td>
                     <td>${p.category || 'General'}</td>
-                    <td><strong style="font-size:15px; color:var(--blue);">${p.quantity}</strong></td>
+                    <td><strong style="font-size:15px; color:var(--teal);">${p.quantity}</strong></td>
                     <td>${p.uom || 'Units'}</td>
                     <td><span style="color:${p.quantity > 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:700;">${p.status || 'Active'}</span></td>
                 </tr>
@@ -1292,7 +1254,7 @@
         }
 
         function populateProductSelects(products) {
-            const options = products.map(p => `<option value="${p.sku}">${p.name} (${p.sku}) — Qty: ${p.quantity}</option>`).join('');
+            const options = products.map(p => `<option value="${p.sku}">${p.name} (${p.sku}) — Available: ${p.quantity}</option>`).join('');
             const sel1 = document.getElementById('opProductSelect');
             const sel2 = document.getElementById('workerProductSelect');
             if (sel1) sel1.innerHTML = options;
@@ -1327,13 +1289,14 @@
                 const opData = await resOp.json();
                 if (!resOp.ok) { alert(opData.message || 'Failed to create movement.'); return; }
 
-                const resVal = await fetch(`${API_BASE}/operations/${opData.id}/validate`, {
+                const opId = opData.operation ? opData.operation.id : opData.id;
+                const resVal = await fetch(`${API_BASE}/operations/validate/${opId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` }
                 });
                 const valData = await resVal.json();
                 if (resVal.ok) {
-                    alert(`Movement ${valData.reference} Executed & Validated Successfully!`);
+                    alert(`Movement ${valData.operation ? valData.operation.reference : 'Validated'} Executed Successfully!`);
                     loadDashboardData();
                 } else { alert(valData.message || 'Validation failed.'); }
             } catch (err) { alert('Connection error.'); }
@@ -1348,6 +1311,7 @@
             const sku = document.getElementById('newSkuCode').value.trim();
             const name = document.getElementById('newSkuName').value.trim();
             const category = document.getElementById('newCategory').value.trim();
+            const location = 'Main Warehouse';
             const quantity = parseInt(document.getElementById('newQty').value, 10);
             const unit_price = parseFloat(document.getElementById('newUnitPrice').value);
 
@@ -1358,11 +1322,11 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${jwtToken}`
                     },
-                    body: JSON.stringify({ sku, name, category, quantity, unit_price })
+                    body: JSON.stringify({ sku, name, category, location, quantity, unit_price })
                 });
                 if (res.ok) {
                     closeModal('addProductModal');
-                    alert(`Product SKU "${name}" created!`);
+                    alert(`Product SKU "${name}" created successfully!`);
                     loadDashboardData();
                 } else {
                     const data = await res.json();
@@ -1391,7 +1355,7 @@
                 const data = await res.json();
                 if (res.ok) {
                     closeModal('createOpModal');
-                    alert(`Operation ${data.reference} created as Draft!`);
+                    alert(`Operation ${data.operation ? data.operation.reference : 'Document'} created!`);
                     loadDashboardData();
                 } else { alert(data.message || 'Failed to create operation.'); }
             } catch (err) { alert('Connection error.'); }
