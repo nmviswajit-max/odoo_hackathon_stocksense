@@ -226,6 +226,30 @@
             color: #fff;
         }
 
+        .role-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 750;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .role-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .role-btn.active {
+            background: var(--teal);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(8, 127, 118, 0.4);
+            border-color: var(--teal);
+        }
+
         .content {
             padding: 32px;
             max-width: 1400px;
@@ -583,6 +607,17 @@
             <div class="topbar-title">
                 <h2 id="pageHeading">StockSense Terminal</h2>
             </div>
+
+            <!-- INTERACTIVE ROLE SWITCHER -->
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:4px 10px; border-radius:10px; border:1px solid var(--line);">
+                <span style="font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Role View:</span>
+                <div style="display:flex; gap:4px;">
+                    <button id="btnRoleAdmin" class="role-btn" onclick="switchRoleView('admin')">👑 Admin</button>
+                    <button id="btnRoleManager" class="role-btn" onclick="switchRoleView('manager')">👔 Manager</button>
+                    <button id="btnRoleWorker" class="role-btn" onclick="switchRoleView('worker')">📦 Worker</button>
+                </div>
+            </div>
+
             <button class="btn-logout" onclick="logout()">Sign out</button>
         </header>
 
@@ -932,6 +967,28 @@
                 heading.textContent = '🏭 Warehouse Operations Terminal';
                 welcomeDesc.textContent = 'Welcome Operative! Use the Movement Terminal for fast bin transfers, pick & pack shipping, and read-only SKU lookup.';
             }
+
+            // Highlight active role selector button
+            ['Admin', 'Manager', 'Worker'].forEach(r => {
+                const btn = document.getElementById(`btnRole${r}`);
+                if (btn) {
+                    if (r.toLowerCase() === role) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+        }
+
+        function switchRoleView(newRole) {
+            if (!currentUser) return;
+            currentUser.role = newRole;
+            localStorage.setItem('stocksense_current_user', JSON.stringify(currentUser));
+            
+            checkAuth();
+            loadDashboardData();
+
+            // Default to overview dashboard tab
+            const firstNav = document.querySelector('.nav-item');
+            if (firstNav) switchTab('dashboard', firstNav);
         }
 
         function logout() {
