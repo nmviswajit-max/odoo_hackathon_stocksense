@@ -7,8 +7,8 @@
       "role": "admin",
       "id": "usr_1790408249369_ovxm7",
       "created_at": "2026-09-26T07:37:29.369Z",
-      "otp_code": "853559",
-      "otp_expires": 1790413895992
+      "otp_code": null,
+      "otp_expires": null
     },
     {
       "name": "Michael Scott (Manager)",
@@ -41,12 +41,12 @@
       "name": "Steel Rods 20mm",
       "category": "Raw Material",
       "uom": "Kg",
-      "quantity": 347,
+      "quantity": 447,
       "min_threshold": 40,
       "max_threshold": 500,
       "unit_price": 12.5,
       "locations": {
-        "Main Warehouse": 347,
+        "Main Warehouse": 447,
         "Production Floor": 80
       },
       "id": "prd_1790408249448_tf9f",
@@ -152,6 +152,48 @@
     }
   ],
   "operations": [
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Steel Ltd",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790413827395_2yg7",
+      "reference": "WH/IN/0011",
+      "date": "2026-09-26T09:10:27.395Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T09:10:27.408Z"
+    },
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Steel Ltd",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790413790094_v1xr",
+      "reference": "WH/IN/0010",
+      "date": "2026-09-26T09:09:50.094Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T09:09:50.104Z"
+    },
     {
       "doc_type": "Receipt",
       "partner": "Vendor Steel Ltd",
@@ -343,6 +385,32 @@
     }
   ],
   "move_history": [
+    {
+      "id": "move_1790413827408_w1j3",
+      "date": "2026-09-26T09:10:27.408Z",
+      "reference": "WH/IN/0011",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
+      "id": "move_1790413790104_elzy",
+      "date": "2026-09-26T09:09:50.104Z",
+      "reference": "WH/IN/0010",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
     {
       "id": "move_1790413296017_i4zc",
       "date": "2026-09-26T09:01:36.017Z",

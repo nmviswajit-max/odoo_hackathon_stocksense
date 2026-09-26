@@ -95,6 +95,25 @@ class Database {
     return true;
   }
 
+  verifyOTPOnly(email, otpCode) {
+    const db = this.load();
+    const user = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (!user) throw new Error('No registered account found with this email.');
+
+    if (!user.otp_code || user.otp_code !== otpCode) {
+      throw new Error('Invalid OTP code. Please check and try again.');
+    }
+
+    if (Date.now() > user.otp_expires) {
+      throw new Error('OTP has expired. Please request a new OTP code.');
+    }
+
+    user.otp_code = null;
+    user.otp_expires = null;
+    this.save(db);
+    return user;
+  }
+
   // --- WAREHOUSE & LOCATIONS ---
   getWarehouses() { return this.load().warehouses; }
 

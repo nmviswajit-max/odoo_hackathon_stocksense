@@ -92,7 +92,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// OTP Password Reset Request
+// Email Format Validation Helper
+const validateEmailFormat = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// OTP Request (Sends 6-digit OTP code to registered Gmail address)
 router.post('/send-otp', (req, res) => {
   try {
     const { email } = req.body;
@@ -100,20 +106,57 @@ router.post('/send-otp', (req, res) => {
       return res.status(400).json({ error: 'Validation Error', message: 'Email address is required.' });
     }
 
-    const user = db.getUserByEmail(email.trim());
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!validateEmailFormat(trimmedEmail)) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Invalid email format. Please enter a valid address (e.g. name@gmail.com).' });
+    }
+
+    const user = db.getUserByEmail(trimmedEmail);
     if (!user) {
-      return res.status(404).json({ error: 'Not Found', message: 'No registered account found with this email address.' });
+      return res.status(404).json({ error: 'Not Found', message: `No registered account found for ${trimmedEmail}.` });
     }
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     db.setOTP(user.email, otpCode);
 
     res.json({
-      message: `OTP sent to ${user.email}`,
-      otpDemoCode: otpCode
+      message: `Gmail OTP dispatched successfully to ${user.email}`,
+      otpDemoCode: otpCode,
+      email: user.email
     });
   } catch (err) {
     res.status(500).json({ error: 'Server Error', message: 'Failed to dispatch OTP code.' });
+  }
+});
+
+// Gmail Direct OTP Login Endpoint (No Password Required)
+router.post('/verify-otp-login', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Gmail address and 6-digit OTP code are required.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!validateEmailFormat(trimmedEmail)) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Invalid email format. Must be e.g. user@gmail.com.' });
+    }
+
+    const user = db.verifyOTPOnly(trimmedEmail, otp.trim());
+
+    const token = jwt.sign(
+      { id: user.id, name: user.name, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      message: 'Gmail OTP login successful',
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (err) {
+    res.status(400).json({ error: 'Verification Failed', message: err.message || 'OTP Verification failed.' });
   }
 });
 
@@ -125,12 +168,17 @@ router.post('/verify-otp-reset', async (req, res) => {
       return res.status(400).json({ error: 'Validation Error', message: 'Email, OTP, and new password are required.' });
     }
 
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!validateEmailFormat(trimmedEmail)) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Invalid email format.' });
+    }
+
     if (newPassword.length < 6) {
       return res.status(400).json({ error: 'Validation Error', message: 'Password must be at least 6 characters.' });
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    db.verifyOTPAndResetPassword(email.trim(), otp.trim(), newPasswordHash);
+    db.verifyOTPAndResetPassword(trimmedEmail, otp.trim(), newPasswordHash);
 
     res.json({ message: 'Password reset successful! You may now sign in with your new password.' });
   } catch (err) {

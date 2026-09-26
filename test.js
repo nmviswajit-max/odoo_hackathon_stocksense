@@ -67,12 +67,25 @@ async function runTestSuite() {
     assert(adminLogin.status === 200 && adminLogin.body.token, 'Admin login succeeds');
     const adminToken = adminLogin.body.token;
 
-    // 3. OTP Password Reset Request Test
-    console.log('\n3. Testing OTP Password Reset Flow...');
+    // 3. OTP Request & Direct Gmail OTP Login Test
+    console.log('\n3. Testing Gmail OTP Dispatch & Direct Login Flow...');
+    const invalidFormatRes = await request('POST', '/api/auth/send-otp', {
+      email: 'not-an-email-format'
+    });
+    assert(invalidFormatRes.status === 400, 'Invalid email format rejected by backend validator');
+
     const otpRes = await request('POST', '/api/auth/send-otp', {
       email: 'admin@stocksense.com'
     });
-    assert(otpRes.status === 200 && otpRes.body.otpDemoCode, 'OTP code generated & dispatched');
+    assert(otpRes.status === 200 && otpRes.body.otpDemoCode, 'Gmail OTP code generated & dispatched');
+
+    if (otpRes.body.otpDemoCode) {
+      const directOtpLogin = await request('POST', '/api/auth/verify-otp-login', {
+        email: 'admin@stocksense.com',
+        otp: otpRes.body.otpDemoCode
+      });
+      assert(directOtpLogin.status === 200 && directOtpLogin.body.token, 'Direct Gmail OTP authentication succeeds without password');
+    }
 
     // 4. Products & Dashboard KPIs Endpoint Test
     console.log('\n4. Testing Products & Dashboard KPIs...');
