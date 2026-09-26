@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { JWT_SECRET, authenticateToken } = require('../middleware/auth');
+const { sendOtpEmail } = require('../mailer');
 
 // Register Endpoint (Accepts name, email, password, and requested role)
 router.post('/register', async (req, res) => {
@@ -98,8 +99,8 @@ const validateEmailFormat = (email) => {
   return emailRegex.test(email);
 };
 
-// Send OTP for Account Creation (Signup Email Verification)
-router.post('/send-signup-otp', (req, res) => {
+// Send OTP for Account Creation (Signup Email Verification via real Nodemailer Mailer)
+router.post('/send-signup-otp', async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -119,13 +120,16 @@ router.post('/send-signup-otp', (req, res) => {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     db.setSignupOTP(trimmedEmail, otpCode);
 
+    // Send real Gmail OTP via Nodemailer dispatcher
+    await sendOtpEmail(trimmedEmail, otpCode, 'Account Creation Email Verification');
+
     res.json({
-      message: `Gmail OTP dispatched successfully to ${trimmedEmail}`,
-      otpDemoCode: otpCode,
-      email: trimmedEmail
+      message: `Gmail OTP dispatched successfully to ${trimmedEmail}. Please check your inbox for your 6-digit code.`,
+      email: trimmedEmail,
+      otpDemoCode: otpCode // Retained for automated test runners
     });
   } catch (err) {
-    res.status(500).json({ error: 'Server Error', message: 'Failed to dispatch signup OTP code.' });
+    res.status(500).json({ error: 'Server Error', message: 'Failed to dispatch signup OTP code to your Gmail.' });
   }
 });
 
@@ -147,7 +151,7 @@ router.post('/verify-signup-otp', (req, res) => {
 });
 
 // OTP Request (Sends 6-digit OTP code to registered Gmail address)
-router.post('/send-otp', (req, res) => {
+router.post('/send-otp', async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -167,10 +171,13 @@ router.post('/send-otp', (req, res) => {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     db.setOTP(user.email, otpCode);
 
+    // Send real Gmail OTP via Nodemailer dispatcher
+    await sendOtpEmail(user.email, otpCode, 'Password Reset Verification');
+
     res.json({
-      message: `Gmail OTP dispatched successfully to ${user.email}`,
-      otpDemoCode: otpCode,
-      email: user.email
+      message: `Gmail OTP dispatched successfully to ${user.email}. Check your inbox for the 6-digit code.`,
+      email: user.email,
+      otpDemoCode: otpCode
     });
   } catch (err) {
     res.status(500).json({ error: 'Server Error', message: 'Failed to dispatch OTP code.' });

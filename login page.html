@@ -687,8 +687,7 @@
                         <!-- OTP Notice Banner -->
                         <div id="signupOtpNotice" style="display:none;" class="otp-dispatch-banner">
                             <strong>📩 Gmail OTP Code Sent!</strong><br>
-                            A 6-digit OTP code was generated & sent to your Gmail. Check code below:
-                            <div id="signupDemoOtpBadge" style="margin-top:6px; font-weight:800; font-size:16px; letter-spacing:3px; color:var(--teal);"></div>
+                            A 6-digit OTP code has been dispatched to your Gmail address. Please check your Gmail inbox (or Spam folder) for your verification code.
                         </div>
 
                         <!-- OTP Input & Verification Step -->
@@ -993,13 +992,11 @@
                 }
 
                 document.getElementById('signupOtpNotice').style.display = 'block';
-                document.getElementById('signupDemoOtpBadge').textContent = `OTP Code: ${data.otpDemoCode}`;
                 document.getElementById('signupOtpField').style.display = 'block';
                 const otpInput = document.getElementById('signupOtpInput');
                 otpInput.focus();
-                if (data.otpDemoCode) otpInput.value = data.otpDemoCode;
 
-                showModal('Gmail OTP Dispatched!', `A 6-digit verification code has been dispatched to ${email}.`, 'info');
+                showModal('Gmail OTP Dispatched!', `A 6-digit verification code has been dispatched to ${email}. Please check your Gmail inbox (and Spam folder).`, 'info');
             } catch (err) {
                 showModal('Server Error', 'Failed to send OTP code.', 'error');
             }
