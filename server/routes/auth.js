@@ -247,4 +247,38 @@ router.get('/me', authenticateToken, (req, res) => {
   res.json({ user: req.user });
 });
 
+// List All Users Endpoint (For Admin & Manager Management Panels)
+router.get('/users', authenticateToken, (req, res) => {
+  try {
+    const users = db.getUsers();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: 'Server Error', message: 'Failed to fetch users list.' });
+  }
+});
+
+// Update User Role Endpoint (Admin Privilege)
+router.put('/users/:id/role', authenticateToken, (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(430).json({ error: 'Permission Denied', message: 'Only System Administrators can modify user roles.' });
+    }
+
+    const { role } = req.body;
+    const validRoles = ['admin', 'manager', 'worker'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ error: 'Validation Error', message: 'Invalid role specified. Must be admin, manager, or worker.' });
+    }
+
+    const updated = db.updateUserRole(req.params.id, role);
+    if (!updated) {
+      return res.status(404).json({ error: 'Not Found', message: 'User not found.' });
+    }
+
+    res.json({ message: 'User role updated successfully.', user: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Server Error', message: 'Failed to update user role.' });
+  }
+});
+
 module.exports = router;

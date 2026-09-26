@@ -49,11 +49,19 @@ class Database {
   }
 
   // --- USER & OTP OPERATIONS ---
-  getUsers() { return this.load().users; }
+  getUsers() { 
+    return this.load().users.map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      role: u.role,
+      created_at: u.created_at
+    })); 
+  }
 
   getUserByEmail(email) {
     if (!email) return null;
-    return this.getUsers().find(u => u.email.toLowerCase() === email.toLowerCase());
+    return this.load().users.find(u => u.email.toLowerCase() === email.toLowerCase());
   }
 
   addUser(user) {
@@ -63,6 +71,15 @@ class Database {
     db.users.push(user);
     this.save(db);
     return user;
+  }
+
+  updateUserRole(userId, newRole) {
+    const db = this.load();
+    const user = db.users.find(u => u.id === userId);
+    if (!user) return null;
+    user.role = newRole;
+    this.save(db);
+    return { id: user.id, name: user.name, email: user.email, role: user.role };
   }
 
   setOTP(email, otpCode) {

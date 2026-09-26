@@ -864,12 +864,20 @@
                 localStorage.setItem('stocksense_jwt_token', data.token);
                 localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
 
-                showModal('Sign in Successful!', `Redirecting to StockSense Dashboard...`, 'success');
-                setTimeout(() => window.location.href = 'home.html', 1100);
+                const targetUrl = getRoleHomeUrl(data.user);
+                showModal('Sign in Successful!', `Redirecting to your ${data.user.role.toUpperCase()} Terminal...`, 'success');
+                setTimeout(() => window.location.href = targetUrl, 1100);
             } catch (err) {
                 showModal('Connection Error', 'Backend server unreachable.', 'error');
             }
         });
+
+        function getRoleHomeUrl(user) {
+            const role = (user && user.role) ? user.role.toLowerCase() : 'worker';
+            if (role === 'admin') return 'admin_home.html';
+            if (role === 'manager') return 'manager_home.html';
+            return 'worker_home.html';
+        }
 
         // Registration Handler with Role selection
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
@@ -901,8 +909,9 @@
                 localStorage.setItem('stocksense_jwt_token', data.token);
                 localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
 
-                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to workspace...`, 'success');
-                setTimeout(() => window.location.href = 'home.html', 1300);
+                const targetUrl = getRoleHomeUrl(data.user);
+                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to your ${data.user.role.toUpperCase()} workspace...`, 'success');
+                setTimeout(() => window.location.href = targetUrl, 1300);
             } catch (err) {
                 showModal('Server Error', 'Failed to register account.', 'error');
             }
@@ -1094,8 +1103,9 @@
                 localStorage.setItem('stocksense_jwt_token', data.token);
                 localStorage.setItem('stocksense_current_user', JSON.stringify(data.user));
 
-                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to workspace...`, 'success');
-                setTimeout(() => window.location.href = 'home.html', 1300);
+                const targetUrl = getRoleHomeUrl(data.user);
+                showModal('Account Created!', `Welcome to StockSense, ${data.user.name}! Redirecting to your ${data.user.role.toUpperCase()} workspace...`, 'success');
+                setTimeout(() => window.location.href = targetUrl, 1300);
             } catch (err) {
                 showModal('Server Error', 'Failed to register account.', 'error');
             }
