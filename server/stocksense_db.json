@@ -41,12 +41,12 @@
       "name": "Steel Rods 20mm",
       "category": "Raw Material",
       "uom": "Kg",
-      "quantity": 747,
+      "quantity": 797,
       "min_threshold": 40,
       "max_threshold": 500,
       "unit_price": 12.5,
       "locations": {
-        "Main Warehouse": 747,
+        "Main Warehouse": 797,
         "Production Floor": 80
       },
       "id": "prd_1790408249448_tf9f",
@@ -152,6 +152,27 @@
     }
   ],
   "operations": [
+    {
+      "doc_type": "Receipt",
+      "partner": "Vendor Steel Ltd",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "status": "Done",
+      "items": [
+        {
+          "product_id": "prd_1790408249448_tf9f",
+          "sku": "STL-ROD-100",
+          "name": "Steel Rods 20mm",
+          "qty": 50
+        }
+      ],
+      "created_by": "Sarah Connor (Admin)",
+      "id": "op_1790419610075_3ee5",
+      "reference": "WH/IN/0018",
+      "date": "2026-09-26T10:46:50.075Z",
+      "validated_by": "Sarah Connor (Admin)",
+      "validated_at": "2026-09-26T10:46:50.089Z"
+    },
     {
       "doc_type": "Receipt",
       "partner": "Vendor Steel Ltd",
@@ -512,6 +533,19 @@
   ],
   "move_history": [
     {
+      "id": "move_1790419610089_eb56",
+      "date": "2026-09-26T10:46:50.089Z",
+      "reference": "WH/IN/0018",
+      "doc_type": "Receipt",
+      "product_name": "Steel Rods 20mm",
+      "sku": "STL-ROD-100",
+      "source_location": "Vendor Location",
+      "dest_location": "Main Warehouse",
+      "qty_change": "+50",
+      "user": "Sarah Connor (Admin)",
+      "status": "Done"
+    },
+    {
       "id": "move_1790418183229_8mpk",
       "date": "2026-09-26T10:23:03.229Z",
       "reference": "WH/IN/0017",
@@ -735,8 +769,16 @@
   ],
   "pending_otps": {
     "rifathhassan10@gmail.com": {
-      "otp": "353806",
-      "expires": 1790418066851
+      "otp": "478908",
+      "expires": 1790419788113
+    },
+    "rifathhassan@gmail.com": {
+      "otp": "609603",
+      "expires": 1790419750543
+    },
+    "vijay811082@gmail.com": {
+      "otp": "429568",
+      "expires": 1790419873185
     }
   }
 }

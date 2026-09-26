@@ -991,12 +991,27 @@
                     return;
                 }
 
-                document.getElementById('signupOtpNotice').style.display = 'block';
+                const notice = document.getElementById('signupOtpNotice');
+                notice.style.display = 'block';
+
+                if (data.previewUrl) {
+                    notice.innerHTML = `
+                        <strong>📩 Gmail OTP Code Dispatched!</strong><br>
+                        A 6-digit OTP code was sent to <strong>${email}</strong>.<br>
+                        <a href="${data.previewUrl}" target="_blank" style="display:inline-block; margin-top:6px; color:var(--teal); font-weight:750; text-decoration:underline;">🔗 Click Here to Open Dev Email Inbox Preview</a>
+                    `;
+                } else {
+                    notice.innerHTML = `
+                        <strong>📩 Gmail OTP Code Sent!</strong><br>
+                        A 6-digit OTP code has been dispatched to your Gmail address (${email}). Please check your Gmail inbox (or Spam folder) for your verification code.
+                    `;
+                }
+
                 document.getElementById('signupOtpField').style.display = 'block';
                 const otpInput = document.getElementById('signupOtpInput');
                 otpInput.focus();
 
-                showModal('Gmail OTP Dispatched!', `A 6-digit verification code has been dispatched to ${email}. Please check your Gmail inbox (and Spam folder).`, 'info');
+                showModal('Gmail OTP Dispatched!', `A 6-digit verification code has been dispatched to ${email}. Check your Gmail inbox for your code.`, 'info');
             } catch (err) {
                 showModal('Server Error', 'Failed to send OTP code.', 'error');
             }

@@ -121,11 +121,12 @@ router.post('/send-signup-otp', async (req, res) => {
     db.setSignupOTP(trimmedEmail, otpCode);
 
     // Send real Gmail OTP via Nodemailer dispatcher
-    await sendOtpEmail(trimmedEmail, otpCode, 'Account Creation Email Verification');
+    const mailResult = await sendOtpEmail(trimmedEmail, otpCode, 'Account Creation Email Verification');
 
     res.json({
       message: `Gmail OTP dispatched successfully to ${trimmedEmail}. Please check your inbox for your 6-digit code.`,
       email: trimmedEmail,
+      previewUrl: mailResult ? mailResult.previewUrl : null,
       otpDemoCode: otpCode // Retained for automated test runners
     });
   } catch (err) {
