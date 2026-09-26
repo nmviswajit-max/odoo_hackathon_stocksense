@@ -873,10 +873,7 @@
         });
 
         function getRoleHomeUrl(user) {
-            const role = (user && user.role) ? user.role.toLowerCase() : 'worker';
-            if (role === 'admin') return 'admin_home.html';
-            if (role === 'manager') return 'manager_home.html';
-            return 'worker_home.html';
+            return 'home.html';
         }
 
         // Registration Handler with Role selection
