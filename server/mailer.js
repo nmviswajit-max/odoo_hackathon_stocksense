@@ -1,53 +1,70 @@
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 
-// Configure Email Transporter
-let transporter = null;
-
+/**
+ * Creates and returns the active email transporter based on configuration
+ */
 async function getTransporter() {
-  if (transporter) return transporter;
-
   const gmailUser = process.env.GMAIL_USER;
   const gmailPass = process.env.GMAIL_PASS;
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = process.env.SMTP_PORT || 587;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
 
+  // 1. Gmail SMTP Configuration
   if (gmailUser && gmailPass) {
-    // Production / Active Gmail SMTP Configuration
-    transporter = nodemailer.createTransport({
+    console.log(`📧 Using Gmail SMTP for outbound OTP emails (Account: ${gmailUser})`);
+    return nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: gmailUser,
-        pass: gmailPass
+        user: gmailUser.trim(),
+        pass: gmailPass.trim()
       }
     });
-    console.log(`📧 Configured Nodemailer with Gmail SMTP account: ${gmailUser}`);
-  } else {
-    // Development / Ethereal Real Email Testing Account
-    try {
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass
-        }
-      });
-      console.log(`📧 Configured Nodemailer with Ethereal Test Account: ${testAccount.user}`);
-    } catch (err) {
-      console.warn('⚠️ Could not create Ethereal test account, using JSON transport fallback.');
-      transporter = nodemailer.createTransport({ jsonTransport: true });
-    }
   }
 
-  return transporter;
+  // 2. Custom SMTP Configuration (SendGrid, Brevo, Mailgun, SMTP2GO, etc.)
+  if (smtpHost && smtpUser && smtpPass) {
+    console.log(`📧 Using Custom SMTP (${smtpHost}:${smtpPort}) for outbound OTP emails`);
+    return nodemailer.createTransport({
+      host: smtpHost.trim(),
+      port: parseInt(smtpPort, 10),
+      secure: smtpPort == 465,
+      auth: {
+        user: smtpUser.trim(),
+        pass: smtpPass.trim()
+      }
+    });
+  }
+
+  // 3. Development / Ethereal Real Email Testing Transport
+  try {
+    const testAccount = await nodemailer.createTestAccount();
+    console.log(`📧 Created Ethereal Test Mailer (Dev Mode). User: ${testAccount.user}`);
+    return nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass
+      }
+    });
+  } catch (err) {
+    console.warn('⚠️ Could not create Ethereal test account. Falling back to stream transport.');
+    return nodemailer.createTransport({ jsonTransport: true });
+  }
 }
 
 /**
  * Sends a 6-digit OTP email to the user's Gmail address
  */
-async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Verification') {
+async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Creation Email Verification') {
   try {
-    const mail = await getTransporter();
+    const mailer = await getTransporter();
+
+    const sender = process.env.GMAIL_USER || 'no-reply@stocksense.com';
 
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; padding: 25px; border: 1px solid #dce6e7; border-radius: 12px; background-color: #f6faf9;">
@@ -58,7 +75,7 @@ async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Verifica
         
         <div style="background-color: #ffffff; padding: 25px; border-radius: 10px; border: 1px solid #e1eeed; text-align: center;">
           <p style="font-size: 15px; color: #142c3a; margin-top: 0;">Your 6-Digit Gmail Verification OTP Code is:</p>
-          <div style="font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #087f76; padding: 15px; background: #e8f7f1; border-radius: 8px; display: inline-block; margin: 15px 0;">
+          <div style="font-size: 34px; font-weight: 800; letter-spacing: 6px; color: #087f76; padding: 15px 25px; background: #e8f7f1; border-radius: 8px; display: inline-block; margin: 15px 0;">
             ${otpCode}
           </div>
           <p style="font-size: 13px; color: #607480; margin-bottom: 0;">This OTP code will expire in <strong>10 minutes</strong>. Do not share this code with anyone.</p>
@@ -71,25 +88,33 @@ async function sendOtpEmail(recipientEmail, otpCode, context = 'Account Verifica
     `;
 
     const mailOptions = {
-      from: `"StockSense Security" <no-reply@stocksense.com>`,
+      from: `"StockSense Security" <${sender}>`,
       to: recipientEmail,
-      subject: `[${otpCode}] StockSense Gmail Verification OTP`,
+      subject: `[${otpCode}] Your StockSense Gmail Verification OTP`,
       text: `Your StockSense 6-digit OTP verification code is: ${otpCode}. Valid for 10 minutes.`,
       html: htmlContent
     };
 
-    const info = await mail.sendMail(mailOptions);
-    console.log(`✅ Real Gmail OTP Email sent to ${recipientEmail}. Message ID: ${info.messageId}`);
+    const info = await mailer.sendMail(mailOptions);
+    console.log(`=======================================================`);
+    console.log(`📩 GMAIL OTP DISPATCH TELEMETRY`);
+    console.log(`Recipient: ${recipientEmail}`);
+    console.log(`OTP Code : ${otpCode}`);
+    if (info && info.messageId) console.log(`Message ID: ${info.messageId}`);
     
-    // Log preview link if Ethereal account was used
-    if (nodemailer.getTestMessageUrl(info)) {
-      console.log(`🔗 Ethereal Inbox Email Preview Link: ${nodemailer.getTestMessageUrl(info)}`);
+    // Log preview link if test account was used
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+    if (previewUrl) {
+      console.log(`🔗 Ethereal Web Inbox Link: ${previewUrl}`);
     }
+    console.log(`=======================================================`);
 
-    return info;
+    return { success: true, info, previewUrl };
+
   } catch (err) {
-    console.error(`❌ Failed to send OTP email to ${recipientEmail}:`, err);
-    throw err;
+    console.error(`❌ Mailer error sending OTP to ${recipientEmail}:`, err.message);
+    // Don't crash backend — allow OTP process to continue so user can proceed
+    return { success: false, error: err.message };
   }
 }
 
